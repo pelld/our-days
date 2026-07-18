@@ -150,6 +150,14 @@ textarea {
   height: 20px;
   accent-color: var(--green);
 }
+.task-copy {
+  display: grid;
+  gap: 2px;
+}
+.task-copy small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
 .points {
   margin-left: auto;
   font-size: 0.8rem;

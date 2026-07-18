@@ -360,6 +360,7 @@ const seed = {
 let data = structuredClone(seed),
   currentPerson = "hunter",
   manageType = "tasks",
+  pendingTaskId = null,
   unsubscribe = null,
   ready = false;
 
@@ -411,6 +412,12 @@ function bind() {
     $("#memoryDialog").showModal();
   $("#cancelMemory").onclick = () => $("#memoryDialog").close();
   $("#memoryForm").onsubmit = addMemory;
+  $("#choiceForm").onsubmit = saveTaskChoice;
+  $("#cancelChoice").onclick = () => {
+    pendingTaskId = null;
+    $("#choiceDialog").close();
+    renderToday();
+  };
   ["location", "weather", "time", "cost"].forEach(
     (x) => ($(`#${x}Filter`).onchange = renderOutings),
   );
@@ -479,7 +486,7 @@ function renderToday() {
   $("#taskGroups").innerHTML = Object.entries(groups)
     .map(
       ([g, ts]) =>
-        `<section class="task-section"><h3>${esc(g)}</h3><div class="task-grid">${ts.map((t) => `<label class="task ${completed(t.id) ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${completed(t.id) ? "checked" : ""}><span>${esc(t.name)}</span>${t.points ? `<span class="points">+${t.points}</span>` : ""}</label>`).join("")}</div></section>`,
+        `<section class="task-section"><h3>${esc(g)}</h3><div class="task-grid">${ts.map((t) => { const completion=data.completions.find((x)=>x.taskId===t.id&&x.date===todayKey()); return `<label class="task ${completion ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${completion ? "checked" : ""}><span class="task-copy"><span>${esc(t.name)}</span>${completion?.choice ? `<small>${esc(completion.choice)}</small>` : t.choices?.length ? `<small>Choose when completed</small>` : ""}</span>${t.points ? `<span class="points">+${t.points}</span>` : ""}</label>`; }).join("")}</div></section>`,
     )
     .join("");
   $$("[data-task]").forEach(
@@ -490,16 +497,29 @@ function toggleTask(id, on) {
   data.completions = data.completions.filter(
     (x) => !(x.taskId === id && x.date === todayKey()),
   );
-  if (on) {
-    const t = data.tasks.find((x) => x.id === id);
-    data.completions.push({
-      taskId: id,
-      person: t.person,
-      date: todayKey(),
-      points: t.points,
-    });
+  if (!on) return save();
+  const task = data.tasks.find((x) => x.id === id);
+  if (task.choices?.length) {
+    pendingTaskId = id;
+    $("#choiceTitle").textContent = task.name;
+    $("#taskChoice").innerHTML = task.choices
+      .map((choice) => `<option value="${esc(choice)}">${esc(choice)}</option>`)
+      .join("");
+    $("#choiceDialog").showModal();
+    return;
   }
+  completeTask(task);
+}
+function completeTask(task, choice = "") {
+  data.completions.push({taskId:task.id,person:task.person,date:todayKey(),points:task.points,choice});
   save();
+}
+function saveTaskChoice(event) {
+  event.preventDefault();
+  const task = data.tasks.find((x) => x.id === pendingTaskId);
+  if (task) completeTask(task, $("#taskChoice").value);
+  pendingTaskId = null;
+  $("#choiceDialog").close();
 }
 function eligible(o) {
   const loc = $("#locationFilter").value,
@@ -638,7 +658,7 @@ function renderManage() {
   const items = data[manageType],
     isTask = manageType === "tasks";
   $("#manageTable").innerHTML =
-    `<div class="table-wrap"><table class="manage-table"><thead><tr><th>Order</th><th>Name</th>${isTask ? "<th>Person</th><th>Section</th><th>Type</th><th>Frequency</th><th>Points</th>" : "<th>Location</th><th>Weather</th><th>Time</th>"}<th>Active</th><th></th></tr></thead><tbody>${items
+    `<div class="table-wrap"><table class="manage-table"><thead><tr><th>Order</th><th>Name</th>${isTask ? "<th>Person</th><th>Section</th><th>Type</th><th>Frequency</th><th>Choices</th><th>Points</th>" : "<th>Location</th><th>Weather</th><th>Time</th>"}<th>Active</th><th></th></tr></thead><tbody>${items
       .map(
         (x, i) =>
           `<tr><td class="row-actions"><button data-move="up" data-i="${i}" aria-label="Move up" ${i === 0 ? "disabled" : ""}>↑</button><button data-move="down" data-i="${i}" aria-label="Move down" ${i === items.length - 1 ? "disabled" : ""}>↓</button></td><td><input data-field="name" data-i="${i}" value="${esc(x.name)}"></td>${
@@ -658,7 +678,7 @@ function renderManage() {
                     ["anytime", "Any time"],
                   ],
                   x.frequency || "daily",
-                )}</select></td><td><input type="number" min="0" data-field="points" data-i="${i}" value="${x.points || 0}"></td>`
+                )}</select></td><td><input data-field="choices" data-i="${i}" value="${esc((x.choices||[]).join(', '))}" placeholder="Maths, English…"></td><td><input type="number" min="0" data-field="points" data-i="${i}" value="${x.points || 0}"></td>`
               : `<td><select data-field="location" data-i="${i}">${options(
                   [
                     ["england", "England"],
@@ -688,8 +708,9 @@ function renderManage() {
       (el.onchange = () => {
         const item = data[manageType][+el.dataset.i],
           f = el.dataset.field;
-        item[f] =
-          el.type === "checkbox"
+        item[f] = f === "choices"
+          ? el.value.split(",").map((value)=>value.trim()).filter(Boolean)
+          : el.type === "checkbox"
             ? el.checked
             : el.type === "number"
               ? +el.value
@@ -729,6 +750,7 @@ function addRow() {
       category: "Other",
       kind: "optional",
       frequency: "daily",
+      choices: [],
       points: 5,
       active: true,
     });
