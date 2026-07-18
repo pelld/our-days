@@ -46,6 +46,7 @@
           </p>
           <button class="text-button" id="changePlan">Change plan</button>
         </article>
+        <div id="learningToday"></div>
         <div id="taskGroups"></div>
         <button class="primary wide" id="quickMemory">＋ Add a memory</button>
       </section>
@@ -132,7 +133,10 @@
         </p>
         <div class="manage-tabs">
           <button class="chip active" data-manage="tasks">Tasks</button
-          ><button class="chip" data-manage="outings">Outings</button>
+          ><button class="chip" data-manage="outings">Outings</button
+          ><button class="chip" data-manage="learningActivities">
+            Learning wheel
+          </button>
         </div>
         <div id="manageTable"></div>
         <button class="primary" id="addRow">＋ Add item</button>
@@ -166,6 +170,65 @@
             Cancel
           </button>
           <button type="submit" class="primary">Complete task</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="learningDialog" class="learning-dialog">
+      <form method="dialog">
+        <div class="learning-head">
+          <div>
+            <p class="eyebrow">HUNTER'S LEARNING WHEEL</p>
+            <h3 id="learningStageTitle">Choose the area</h3>
+          </div>
+          <button class="secondary" value="cancel" aria-label="Close">
+            Close
+          </button>
+        </div>
+        <div id="learningFilters" class="learning-filters">
+          <label
+            >Time<select id="learnTime">
+              <option value="any">Any</option>
+              <option value="5">5 minutes</option>
+              <option value="10">10 minutes</option>
+              <option value="20">20 minutes</option>
+            </select></label
+          >
+          <label
+            >Place<select id="learnPlace">
+              <option value="any">Anywhere</option>
+              <option value="indoors">Indoors</option>
+              <option value="outdoors">Outdoors</option>
+            </select></label
+          >
+          <label
+            >Help<select id="learnSupport">
+              <option value="any">Either</option>
+              <option value="independent">Independent</option>
+              <option value="together">With Daddy</option>
+            </select></label
+          >
+          <label
+            >Style<select id="learnEnergy">
+              <option value="any">Any</option>
+              <option value="calm">Calm</option>
+              <option value="active">Active</option>
+              <option value="messy">Messy</option>
+            </select></label
+          >
+        </div>
+        <div class="learning-wheel-wrap">
+          <div class="wheel-pointer"></div>
+          <div id="learningWheel" class="learning-wheel"></div>
+        </div>
+        <p id="learningBreadcrumb" class="learning-breadcrumb"></p>
+        <div class="learning-actions">
+          <button type="button" class="secondary" id="learningBack">
+            Back
+          </button>
+          <button type="button" class="secondary" id="learningRestart">
+            Start again
+          </button>
+          <button type="button" class="primary" id="learningSpin">Spin</button>
         </div>
       </form>
     </dialog>

@@ -158,6 +158,119 @@ textarea {
   color: var(--muted);
   font-size: 0.72rem;
 }
+.learning-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.learning-title h3 {
+  margin: 0;
+}
+.text-link {
+  border: 0;
+  background: none;
+  color: var(--green);
+  text-decoration: underline;
+}
+.learning-launch {
+  width: 100%;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  padding: 18px;
+  border: 2px dashed #8ab7a9;
+  border-radius: 15px;
+  background: var(--mint);
+  color: var(--ink);
+}
+.learning-launch span {
+  color: var(--muted);
+}
+.learning-dialog {
+  width: min(94vw, 780px);
+}
+.learning-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.learning-head h3 {
+  margin-top: 3px;
+}
+.learning-filters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.learning-filters label {
+  display: grid;
+  gap: 4px;
+}
+.learning-wheel-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 10px auto 0;
+  width: min(76vw, 390px);
+}
+.learning-wheel {
+  --wheel-radius: min(30vw, 145px);
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 10px solid white;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+  transition: transform 2.4s cubic-bezier(0.12, 0.68, 0.1, 1);
+  overflow: hidden;
+}
+.wheel-pointer {
+  position: absolute;
+  top: -5px;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-top: 34px solid var(--ink);
+}
+.wheel-option {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100px;
+  color: white;
+  font-size: 0.76rem;
+  line-height: 1.1;
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 1px 3px #0008;
+  transform: translate(-50%, -50%) rotate(var(--angle))
+    translateY(calc(var(--wheel-radius) * -1)) rotate(calc(var(--angle) * -1));
+}
+.wheel-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  text-align: center;
+}
+.learning-breadcrumb {
+  min-height: 1.3em;
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+  color: var(--green);
+}
+.learning-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
 .points {
   margin-left: auto;
   font-size: 0.8rem;
@@ -503,5 +616,15 @@ textarea {
   }
   .section-heading select {
     max-width: 130px;
+  }
+  .learning-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .learning-dialog {
+    padding: 16px;
+  }
+  .wheel-option {
+    width: 78px;
+    font-size: 0.66rem;
   }
 }

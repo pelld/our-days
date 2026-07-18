@@ -357,10 +357,188 @@ const seed = {
     lydia: "PhD progress if useful; everything else is optional.",
   },
 };
+const learningSeed = [];
+const addLearning = (area, subject, activities) =>
+  activities.forEach(
+    ([
+      name,
+      minutes = 10,
+      place = "indoors",
+      support = "either",
+      energy = "calm",
+    ]) =>
+      learningSeed.push({
+        id: `learn-${learningSeed.length + 1}`,
+        area,
+        subject,
+        name,
+        minutes,
+        place,
+        support,
+        energy,
+        active: true,
+      }),
+  );
+
+addLearning("English", "Spelling", [
+  ["Spelling test"],
+  ["Practise four tricky words", 5],
+  ["Spelling treasure hunt", 10, "indoors", "either", "active"],
+  ["Write words in silly sentences"],
+]);
+addLearning("English", "Reading", [
+  ["Read together", 20, "indoors", "together"],
+  ["Read independently", 20, "indoors", "independent"],
+  ["Answer five questions about a book", 10],
+  ["Retell a story in one minute", 5, "indoors", "either", "active"],
+]);
+addLearning("English", "Writing", [
+  ["Write a letter"],
+  ["Write a shopping list", 5],
+  ["Describe what you ate", 10],
+  ["Make a comic strip", 20],
+  ["Write instructions for a simple job", 10],
+]);
+addLearning("English", "Vocabulary", [
+  ["Find five words in a dictionary", 10],
+  ["Learn new words from a book", 10],
+  ["Act out vocabulary words", 5, "indoors", "together", "active"],
+  ["Photograph and label five things", 10, "either", "independent"],
+]);
+
+addLearning("Maths", "Number", [
+  ["Mental arithmetic challenge", 10],
+  ["Number-line jumping", 5, "either", "together", "active"],
+  ["Count efficiently in groups", 10],
+  ["Times-table ball game", 10, "outdoors", "together", "active"],
+]);
+addLearning("Maths", "Fractions", [
+  ["Make fractions by folding paper", 10],
+  ["Use food to show fractions", 10, "indoors", "together", "messy"],
+  ["Complete fraction questions", 10],
+  ["Find fractions around the house", 10, "indoors", "independent", "active"],
+]);
+addLearning("Maths", "Shape and measure", [
+  ["Paper folding and shape hunt", 10],
+  ["Estimate then measure five objects", 10],
+  ["Measure ten jumps or throws", 20, "outdoors", "together", "active"],
+  ["Build or draw a repeating pattern", 10],
+]);
+addLearning("Maths", "Money", [
+  ["Count a collection of coins", 10],
+  ["Make a £5 shopping plan", 10],
+  ["Compare two prices", 5],
+  ["Read and explain a receipt", 10],
+  ["Price something in euros", 10],
+]);
+
+addLearning("Science", "Plants", [
+  ["Identify three plants", 10, "outdoors"],
+  ["Propagate a plant or take a cutting", 20, "outdoors", "together", "messy"],
+  ["Press a plant for the scrapbook", 20, "outdoors", "together", "messy"],
+  ["Photograph signs of the season", 10, "outdoors", "independent", "active"],
+]);
+addLearning("Science", "Animals", [
+  ["Five-minute bird watch", 5, "outdoors", "independent"],
+  ["Identify an insect or arthropod", 10, "outdoors", "either", "active"],
+  ["Draw and label an animal", 10],
+  ["Make a fact page about an animal", 20],
+]);
+addLearning("Science", "Human body", [
+  ["Learn and label the skeleton", 10],
+  ["Learn what three organs do", 10],
+  [
+    "Investigate pulse before and after exercise",
+    10,
+    "either",
+    "together",
+    "active",
+  ],
+  ["Make a moving-joint model", 20, "indoors", "together", "messy"],
+]);
+addLearning("Science", "Materials and forces", [
+  ["Predict and test what floats", 20, "indoors", "together", "messy"],
+  ["Build and test a foil boat", 20, "indoors", "together", "messy"],
+  ["Make and compare bubble mixtures", 20, "outdoors", "together", "messy"],
+  ["Build a ramp and test objects", 20, "either", "together", "active"],
+  ["Make a bottle orchestra", 20, "indoors", "together", "active"],
+  [
+    "Make something with clay or salt dough",
+    20,
+    "indoors",
+    "together",
+    "messy",
+  ],
+]);
+
+addLearning("The world", "Geography", [
+  ["Find Whitby and Dieppe on a map", 10],
+  ["Plan a route using map symbols", 10],
+  ["Compare the English and French coastlines", 20],
+  ["Draw a map of somewhere familiar", 10],
+  ["Find and translate a French sign", 5, "outdoors", "together", "active"],
+]);
+addLearning("The world", "Geology", [
+  ["Identify three rocks", 10, "outdoors", "either", "active"],
+  [
+    "Search for fossils or interesting stones",
+    20,
+    "outdoors",
+    "together",
+    "active",
+  ],
+  ["Investigate the geology of the land", 20, "outdoors", "together", "active"],
+  ["Make a rock fact card", 10],
+]);
+addLearning("The world", "History", [
+  ["Investigate Romans or Vindolanda", 20],
+  ["Discover one fact about Whitby history", 10],
+  ["Compare an old and new photograph", 10],
+  ["Ask and answer a local-history question", 10],
+]);
+addLearning("The world", "French", [
+  ["Learn five useful French words", 10],
+  ["Order a pretend snack in French", 5, "indoors", "together", "active"],
+  ["Make labels for five household objects", 10],
+  ["Count or name colours in French", 5],
+]);
+
+addLearning("Practical and creative", "Cooking", [
+  ["Choose a recipe", 10],
+  ["Write a shopping list", 5],
+  ["Measure ingredients", 10, "indoors", "together", "messy"],
+  ["Help cook tea", 20, "indoors", "together", "messy"],
+  ["Prepare a snack", 10, "indoors", "independent", "messy"],
+]);
+addLearning("Practical and creative", "Making", [
+  ["Make some art", 20, "indoors", "independent", "messy"],
+  ["Complete part of a jigsaw", 20],
+  ["Make a paper model", 20, "indoors", "independent", "messy"],
+  ["Build something useful", 20, "either", "together", "messy"],
+  ["Take and caption three photographs", 10, "either", "independent"],
+]);
+addLearning("Practical and creative", "Life skills", [
+  ["Practise tying shoelaces", 10],
+  ["Clean or check something on the car", 20, "outdoors", "together", "messy"],
+  ["Tidy or fix something", 10, "either", "independent", "active"],
+  ["Pack a bag for an outing", 10, "indoors", "independent"],
+  ["Write or follow a set of instructions", 10],
+]);
+addLearning("Practical and creative", "Technology", [
+  ["Record a one-minute news report", 10],
+  ["Create a tiny survey and chart it", 20],
+  ["Learn three keyboard shortcuts", 5],
+  ["Create an obstacle-course algorithm", 20, "outdoors", "together", "active"],
+]);
+seed.learningActivities = learningSeed;
+seed.learningSelections = [];
+
 let data = structuredClone(seed),
   currentPerson = "hunter",
   manageType = "tasks",
   pendingTaskId = null,
+  learningPath = [],
+  learningSpinning = false,
   unsubscribe = null,
   ready = false;
 
@@ -370,6 +548,13 @@ async function save() {
 async function startData() {
   const snap = await getDoc(stateRef);
   if (!snap.exists()) await setDoc(stateRef, seed);
+  else if (!snap.data().learningActivities) {
+    await setDoc(
+      stateRef,
+      { learningActivities: learningSeed, learningSelections: [] },
+      { merge: true },
+    );
+  }
   unsubscribe?.();
   unsubscribe = onSnapshot(stateRef, (s) => {
     if (s.exists()) {
@@ -422,6 +607,22 @@ function bind() {
     (x) => ($(`#${x}Filter`).onchange = renderOutings),
   );
   $("#spinButton").onclick = spin;
+  $("#learningSpin").onclick = spinLearning;
+  $("#learningBack").onclick = () => {
+    learningPath.pop();
+    renderLearningWheel();
+  };
+  $("#learningRestart").onclick = () => {
+    learningPath = [];
+    renderLearningWheel();
+  };
+  ["learnTime", "learnPlace", "learnSupport", "learnEnergy"].forEach(
+    (id) =>
+      ($(`#${id}`).onchange = () => {
+        learningPath = [];
+        renderLearningWheel();
+      }),
+  );
   $$(".manage-tabs button").forEach(
     (b) =>
       (b.onclick = () => {
@@ -480,18 +681,194 @@ function renderAll() {
 function renderToday() {
   const groups = {};
   data.tasks
-    .filter((t) => t.person === currentPerson && t.active)
+    .filter(
+      (t) =>
+        t.person === currentPerson &&
+        t.active &&
+        !(currentPerson === "hunter" && t.category === "Schoolwork"),
+    )
     .forEach((t) => (groups[t.category] ??= []).push(t));
   $("#planText").textContent = data.plans[currentPerson] || "";
+  renderLearningToday();
   $("#taskGroups").innerHTML = Object.entries(groups)
     .map(
       ([g, ts]) =>
-        `<section class="task-section"><h3>${esc(g)}</h3><div class="task-grid">${ts.map((t) => { const completion=data.completions.find((x)=>x.taskId===t.id&&x.date===todayKey()); return `<label class="task ${completion ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${completion ? "checked" : ""}><span class="task-copy"><span>${esc(t.name)}</span>${completion?.choice ? `<small>${esc(completion.choice)}</small>` : t.choices?.length ? `<small>Choose when completed</small>` : ""}</span>${t.points ? `<span class="points">+${t.points}</span>` : ""}</label>`; }).join("")}</div></section>`,
+        `<section class="task-section"><h3>${esc(g)}</h3><div class="task-grid">${ts
+          .map((t) => {
+            const completion = data.completions.find(
+              (x) => x.taskId === t.id && x.date === todayKey(),
+            );
+            return `<label class="task ${completion ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${completion ? "checked" : ""}><span class="task-copy"><span>${esc(t.name)}</span>${completion?.choice ? `<small>${esc(completion.choice)}</small>` : t.choices?.length ? `<small>Choose when completed</small>` : ""}</span>${t.points ? `<span class="points">+${t.points}</span>` : ""}</label>`;
+          })
+          .join("")}</div></section>`,
     )
     .join("");
   $$("[data-task]").forEach(
     (c) => (c.onchange = () => toggleTask(c.dataset.task, c.checked)),
   );
+}
+function todayLearningSelection() {
+  return (data.learningSelections || []).find(
+    (item) => item.person === "hunter" && item.date === todayKey(),
+  );
+}
+function renderLearningToday() {
+  const host = $("#learningToday");
+  if (currentPerson !== "hunter") {
+    host.innerHTML = "";
+    return;
+  }
+  const selection = todayLearningSelection(),
+    activity =
+      selection &&
+      data.learningActivities.find((item) => item.id === selection.activityId),
+    taskId = `learning-${todayKey()}`,
+    done = completed(taskId);
+  host.innerHTML = `<section class="task-section learning-today"><div class="learning-title"><h3>Today's learning</h3><button class="text-link" id="chooseLearning">${activity ? "Choose again" : "Spin the learning wheel"}</button></div>${activity ? `<label class="task ${done ? "done" : ""}"><input type="checkbox" id="learningComplete" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(activity.name)}</span><small>${esc(activity.area)} · ${esc(activity.subject)} · ${activity.minutes} minutes</small></span><span class="points">+5</span></label>` : `<button class="learning-launch" id="learningLaunch"><strong>Let the wheels decide</strong><span>Area → subject → activity</span></button>`}</section>`;
+  const open = () => openLearningWheel();
+  $("#chooseLearning").onclick = open;
+  if ($("#learningLaunch")) $("#learningLaunch").onclick = open;
+  if ($("#learningComplete"))
+    $("#learningComplete").onchange = (event) =>
+      toggleLearningComplete(event.target.checked);
+}
+function toggleLearningComplete(on) {
+  const taskId = `learning-${todayKey()}`;
+  data.completions = data.completions.filter(
+    (item) => !(item.taskId === taskId && item.date === todayKey()),
+  );
+  if (on)
+    data.completions.push({
+      taskId,
+      person: "hunter",
+      date: todayKey(),
+      points: 5,
+      choice: todayLearningSelection()?.activityId || "",
+    });
+  save();
+}
+function openLearningWheel() {
+  learningPath = [];
+  renderLearningWheel();
+  $("#learningDialog").showModal();
+}
+function eligibleLearning() {
+  const time = $("#learnTime").value,
+    place = $("#learnPlace").value,
+    support = $("#learnSupport").value,
+    energy = $("#learnEnergy").value;
+  return (data.learningActivities || []).filter(
+    (item) =>
+      item.active &&
+      (time === "any" || item.minutes === +time) &&
+      (place === "any" || item.place === "either" || item.place === place) &&
+      (support === "any" ||
+        item.support === "either" ||
+        item.support === support) &&
+      (energy === "any" || item.energy === energy),
+  );
+}
+function learningOptions() {
+  const activities = eligibleLearning();
+  if (!learningPath.length)
+    return [...new Set(activities.map((item) => item.area))];
+  if (learningPath.length === 1)
+    return [
+      ...new Set(
+        activities
+          .filter((item) => item.area === learningPath[0])
+          .map((item) => item.subject),
+      ),
+    ];
+  return activities
+    .filter(
+      (item) =>
+        item.area === learningPath[0] && item.subject === learningPath[1],
+    )
+    .map((item) => item.name);
+}
+function renderLearningWheel() {
+  const options = learningOptions(),
+    wheel = $("#learningWheel"),
+    stage = learningPath.length;
+  $("#learningStageTitle").textContent =
+    [
+      "First: choose the area",
+      "Next: choose the subject",
+      "Finally: choose the activity",
+    ][stage] || "Chosen";
+  $("#learningBreadcrumb").textContent = learningPath.join(" → ");
+  $("#learningFilters").hidden = stage > 0;
+  $("#learningBack").hidden = stage === 0;
+  $("#learningRestart").hidden = stage === 0;
+  $("#learningSpin").disabled = !options.length || learningSpinning;
+  const colours = [
+    "#176b5b",
+    "#e7b84b",
+    "#e16b55",
+    "#789f91",
+    "#263d5b",
+    "#c78d31",
+    "#7867a8",
+    "#4f8da0",
+  ];
+  const size = options.length ? 360 / options.length : 360;
+  wheel.style.background = options.length
+    ? `conic-gradient(${options.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+    : "#d9ddd7";
+  wheel.style.transform = "rotate(0deg)";
+  wheel.innerHTML = options.length
+    ? options
+        .map((label, i) => {
+          const angle = (i + 0.5) * size;
+          return `<span class="wheel-option" style="--angle:${angle}deg">${esc(label)}</span>`;
+        })
+        .join("")
+    : '<span class="wheel-empty">No matching activities</span>';
+}
+function spinLearning() {
+  if (learningSpinning) return;
+  const options = learningOptions();
+  if (!options.length) return;
+  learningSpinning = true;
+  $("#learningSpin").disabled = true;
+  const chosenIndex = Math.floor(Math.random() * options.length),
+    chosen = options[chosenIndex],
+    segment = 360 / options.length,
+    target = 1800 - (chosenIndex + 0.5) * segment,
+    wheel = $("#learningWheel");
+  wheel.style.transform = `rotate(${target}deg)`;
+  setTimeout(() => {
+    learningSpinning = false;
+    learningPath.push(chosen);
+    if (learningPath.length === 3) selectLearningActivity();
+    else renderLearningWheel();
+  }, 2400);
+}
+function selectLearningActivity() {
+  const [area, subject, name] = learningPath,
+    activity = data.learningActivities.find(
+      (item) =>
+        item.active &&
+        item.area === area &&
+        item.subject === subject &&
+        item.name === name,
+    );
+  if (!activity) return;
+  data.learningSelections = (data.learningSelections || []).filter(
+    (item) => !(item.person === "hunter" && item.date === todayKey()),
+  );
+  data.learningSelections.push({
+    person: "hunter",
+    date: todayKey(),
+    activityId: activity.id,
+  });
+  data.completions = data.completions.filter(
+    (item) =>
+      !(item.taskId === `learning-${todayKey()}` && item.date === todayKey()),
+  );
+  save();
+  $("#learningDialog").close();
 }
 function toggleTask(id, on) {
   data.completions = data.completions.filter(
@@ -511,7 +888,13 @@ function toggleTask(id, on) {
   completeTask(task);
 }
 function completeTask(task, choice = "") {
-  data.completions.push({taskId:task.id,person:task.person,date:todayKey(),points:task.points,choice});
+  data.completions.push({
+    taskId: task.id,
+    person: task.person,
+    date: todayKey(),
+    points: task.points,
+    choice,
+  });
   save();
 }
 function saveTaskChoice(event) {
@@ -655,6 +1038,10 @@ function options(values, current) {
     .join("");
 }
 function renderManage() {
+  if (manageType === "learningActivities") {
+    renderLearningManage();
+    return;
+  }
   const items = data[manageType],
     isTask = manageType === "tasks";
   $("#manageTable").innerHTML =
@@ -678,7 +1065,7 @@ function renderManage() {
                     ["anytime", "Any time"],
                   ],
                   x.frequency || "daily",
-                )}</select></td><td><input data-field="choices" data-i="${i}" value="${esc((x.choices||[]).join(', '))}" placeholder="Maths, English…"></td><td><input type="number" min="0" data-field="points" data-i="${i}" value="${x.points || 0}"></td>`
+                )}</select></td><td><input data-field="choices" data-i="${i}" value="${esc((x.choices || []).join(", "))}" placeholder="Maths, English…"></td><td><input type="number" min="0" data-field="points" data-i="${i}" value="${x.points || 0}"></td>`
               : `<td><select data-field="location" data-i="${i}">${options(
                   [
                     ["england", "England"],
@@ -708,12 +1095,76 @@ function renderManage() {
       (el.onchange = () => {
         const item = data[manageType][+el.dataset.i],
           f = el.dataset.field;
-        item[f] = f === "choices"
-          ? el.value.split(",").map((value)=>value.trim()).filter(Boolean)
-          : el.type === "checkbox"
-            ? el.checked
-            : el.type === "number"
-              ? +el.value
+        item[f] =
+          f === "choices"
+            ? el.value
+                .split(",")
+                .map((value) => value.trim())
+                .filter(Boolean)
+            : el.type === "checkbox"
+              ? el.checked
+              : el.type === "number"
+                ? +el.value
+                : el.value;
+        save();
+      }),
+  );
+  $$("#manageTable [data-move]").forEach(
+    (button) =>
+      (button.onclick = () =>
+        moveRow(+button.dataset.i, button.dataset.move === "up" ? -1 : 1)),
+  );
+  $$("#manageTable [data-delete]").forEach(
+    (button) => (button.onclick = () => deleteRow(+button.dataset.delete)),
+  );
+}
+function renderLearningManage() {
+  const items = data.learningActivities || [];
+  $("#manageTable").innerHTML =
+    `<p class="muted small">Each row is one possible final result. Areas and subjects automatically become the first two wheels.</p><div class="table-wrap"><table class="manage-table"><thead><tr><th>Order</th><th>Area</th><th>Subject</th><th>Activity</th><th>Min</th><th>Place</th><th>Help</th><th>Style</th><th>Active</th><th></th></tr></thead><tbody>${items
+      .map(
+        (item, i) =>
+          `<tr><td class="row-actions"><button data-move="up" data-i="${i}" ${i === 0 ? "disabled" : ""}>↑</button><button data-move="down" data-i="${i}" ${i === items.length - 1 ? "disabled" : ""}>↓</button></td><td><input data-field="area" data-i="${i}" value="${esc(item.area)}"></td><td><input data-field="subject" data-i="${i}" value="${esc(item.subject)}"></td><td><input data-field="name" data-i="${i}" value="${esc(item.name)}"></td><td><select data-field="minutes" data-i="${i}">${options(
+            [
+              [5, "5"],
+              [10, "10"],
+              [20, "20"],
+            ],
+            item.minutes,
+          )}</select></td><td><select data-field="place" data-i="${i}">${options(
+            [
+              ["either", "Either"],
+              ["indoors", "Indoors"],
+              ["outdoors", "Outdoors"],
+            ],
+            item.place,
+          )}</select></td><td><select data-field="support" data-i="${i}">${options(
+            [
+              ["either", "Either"],
+              ["independent", "Independent"],
+              ["together", "With Daddy"],
+            ],
+            item.support,
+          )}</select></td><td><select data-field="energy" data-i="${i}">${options(
+            [
+              ["calm", "Calm"],
+              ["active", "Active"],
+              ["messy", "Messy"],
+            ],
+            item.energy,
+          )}</select></td><td class="check-cell"><input type="checkbox" data-field="active" data-i="${i}" ${item.active ? "checked" : ""}></td><td><button class="delete-row" data-delete="${i}">Delete</button></td></tr>`,
+      )
+      .join("")}</tbody></table></div>`;
+  $$("#manageTable [data-field]").forEach(
+    (el) =>
+      (el.onchange = () => {
+        const item = data.learningActivities[+el.dataset.i],
+          field = el.dataset.field;
+        item[field] =
+          field === "minutes"
+            ? +el.value
+            : el.type === "checkbox"
+              ? el.checked
               : el.value;
         save();
       }),
@@ -742,7 +1193,19 @@ function deleteRow(index) {
   }
 }
 function addRow() {
-  if (manageType === "tasks")
+  if (manageType === "learningActivities")
+    data.learningActivities.push({
+      id: crypto.randomUUID(),
+      area: "English",
+      subject: "New subject",
+      name: "New activity",
+      minutes: 10,
+      place: "indoors",
+      support: "either",
+      energy: "calm",
+      active: true,
+    });
+  else if (manageType === "tasks")
     data.tasks.push({
       id: crypto.randomUUID(),
       name: "New task",
