@@ -209,6 +209,45 @@ textarea {
   display: grid;
   gap: 4px;
 }
+.learning-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 2px 0 4px;
+}
+.learning-steps div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px;
+  border-radius: 12px;
+  background: #edf0ec;
+  color: var(--muted);
+}
+.learning-steps span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+}
+.learning-steps div.active {
+  background: var(--gold);
+  color: var(--ink);
+}
+.learning-steps div.done {
+  background: var(--mint);
+  color: var(--green);
+}
+.learning-steps div.done span {
+  font-size: 0;
+}
+.learning-steps div.done span::before {
+  content: "✓";
+  font-size: 0.9rem;
+}
 .learning-wheel-wrap {
   position: relative;
   display: grid;
@@ -217,14 +256,15 @@ textarea {
   width: min(76vw, 390px);
 }
 .learning-wheel {
-  --wheel-radius: min(30vw, 145px);
+  --wheel-radius: min(24vw, 112px);
+  --counter-rotation: 0deg;
   position: relative;
   width: 100%;
   aspect-ratio: 1;
   border: 10px solid white;
   border-radius: 50%;
   box-shadow: var(--shadow);
-  transition: transform 2.4s cubic-bezier(0.12, 0.68, 0.1, 1);
+  transition: transform 4.8s cubic-bezier(0.08, 0.62, 0.08, 1);
   overflow: hidden;
 }
 .wheel-pointer {
@@ -241,7 +281,7 @@ textarea {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 100px;
+  width: 118px;
   color: white;
   font-size: 0.76rem;
   line-height: 1.1;
@@ -249,7 +289,8 @@ textarea {
   text-align: center;
   text-shadow: 0 1px 3px #0008;
   transform: translate(-50%, -50%) rotate(var(--angle))
-    translateY(calc(var(--wheel-radius) * -1)) rotate(calc(var(--angle) * -1));
+    translateY(calc(var(--wheel-radius) * -1)) rotate(calc(var(--angle) * -1))
+    rotate(var(--counter-rotation));
 }
 .wheel-empty {
   position: absolute;
@@ -265,6 +306,22 @@ textarea {
   text-align: center;
   font-weight: 800;
   color: var(--green);
+}
+.learning-result {
+  margin: 2px auto 0;
+  padding: 11px 15px;
+  border-radius: 12px;
+  background: var(--mint);
+  color: var(--green);
+  text-align: center;
+  font-weight: 900;
+  animation: result-pop 0.3s ease-out;
+}
+@keyframes result-pop {
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
 }
 .learning-actions {
   display: flex;

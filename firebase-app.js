@@ -538,6 +538,7 @@ let data = structuredClone(seed),
   manageType = "tasks",
   pendingTaskId = null,
   learningPath = [],
+  learningPendingChoice = null,
   learningSpinning = false,
   unsubscribe = null,
   ready = false;
@@ -609,16 +610,19 @@ function bind() {
   $("#spinButton").onclick = spin;
   $("#learningSpin").onclick = spinLearning;
   $("#learningBack").onclick = () => {
+    learningPendingChoice = null;
     learningPath.pop();
     renderLearningWheel();
   };
   $("#learningRestart").onclick = () => {
+    learningPendingChoice = null;
     learningPath = [];
     renderLearningWheel();
   };
   ["learnTime", "learnPlace", "learnSupport", "learnEnergy"].forEach(
     (id) =>
       ($(`#${id}`).onchange = () => {
+        learningPendingChoice = null;
         learningPath = [];
         renderLearningWheel();
       }),
@@ -749,8 +753,9 @@ function toggleLearningComplete(on) {
 }
 function openLearningWheel() {
   learningPath = [];
-  renderLearningWheel();
+  learningPendingChoice = null;
   $("#learningDialog").showModal();
+  renderLearningWheel();
 }
 function eligibleLearning() {
   const time = $("#learnTime").value,
@@ -791,6 +796,7 @@ function renderLearningWheel() {
   const options = learningOptions(),
     wheel = $("#learningWheel"),
     stage = learningPath.length;
+  learningPendingChoice = null;
   $("#learningStageTitle").textContent =
     [
       "First: choose the area",
@@ -802,6 +808,13 @@ function renderLearningWheel() {
   $("#learningBack").hidden = stage === 0;
   $("#learningRestart").hidden = stage === 0;
   $("#learningSpin").disabled = !options.length || learningSpinning;
+  $("#learningSpin").textContent = "Spin";
+  $("#learningResult").hidden = true;
+  $$("[data-learning-step]").forEach((step) => {
+    const index = +step.dataset.learningStep;
+    step.classList.toggle("active", index === stage);
+    step.classList.toggle("done", index < stage);
+  });
   const colours = [
     "#176b5b",
     "#e7b84b",
@@ -816,6 +829,7 @@ function renderLearningWheel() {
   wheel.style.background = options.length
     ? `conic-gradient(${options.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
     : "#d9ddd7";
+  wheel.style.setProperty("--counter-rotation", "0deg");
   wheel.style.transform = "rotate(0deg)";
   wheel.innerHTML = options.length
     ? options
@@ -828,22 +842,42 @@ function renderLearningWheel() {
 }
 function spinLearning() {
   if (learningSpinning) return;
+  if (learningPendingChoice) {
+    learningPath.push(learningPendingChoice);
+    learningPendingChoice = null;
+    if (learningPath.length === 3) selectLearningActivity();
+    else renderLearningWheel();
+    return;
+  }
   const options = learningOptions();
   if (!options.length) return;
   learningSpinning = true;
   $("#learningSpin").disabled = true;
+  $("#learningSpin").textContent = "Spinning…";
+  $("#learningResult").hidden = true;
   const chosenIndex = Math.floor(Math.random() * options.length),
     chosen = options[chosenIndex],
     segment = 360 / options.length,
-    target = 1800 - (chosenIndex + 0.5) * segment,
-    wheel = $("#learningWheel");
+    target = 2880 - (chosenIndex + 0.5) * segment,
+    wheel = $("#learningWheel"),
+    stage = learningPath.length;
+  wheel.style.setProperty("--counter-rotation", "0deg");
   wheel.style.transform = `rotate(${target}deg)`;
   setTimeout(() => {
     learningSpinning = false;
-    learningPath.push(chosen);
-    if (learningPath.length === 3) selectLearningActivity();
-    else renderLearningWheel();
-  }, 2400);
+    learningPendingChoice = chosen;
+    wheel.style.setProperty("--counter-rotation", `${-target}deg`);
+    const result = $("#learningResult");
+    result.textContent = `The wheel chose: ${chosen}`;
+    result.hidden = false;
+    $("#learningSpin").textContent =
+      stage === 0
+        ? "Continue to subject"
+        : stage === 1
+          ? "Continue to activity"
+          : "Use this activity";
+    $("#learningSpin").disabled = false;
+  }, 4800);
 }
 function selectLearningActivity() {
   const [area, subject, name] = learningPath,
