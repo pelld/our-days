@@ -1,0 +1,9 @@
+.header-actions { display: flex; gap: 8px; }
+.login-screen { position: fixed; inset: 0; z-index: 20; background: linear-gradient(145deg, #143f36, #176b5b); display: grid; place-items: center; padding: 20px; }
+.login-screen.hidden { display: none; }
+.login-card { width: min(100%, 420px); background: var(--card); border-radius: 24px; padding: 28px; box-shadow: 0 25px 80px #0018; display: grid; gap: 14px; }
+.login-card h1 { font: 2.4rem Georgia, serif; margin: 0; }
+.login-card p { margin: 0 0 8px; }
+.login-card label { display: grid; gap: 5px; font-size: .82rem; font-weight: 800; }
+.error { color: #a32626 !important; min-height: 1.2em; font-size: .85rem; }
+.saving { opacity: .6; pointer-events: none; }
