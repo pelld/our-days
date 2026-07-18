@@ -29,6 +29,7 @@ const config = {
   messagingSenderId: "209571731890",
   appId: "1:209571731890:web:498f67195d892e03bb6cab",
 };
+const adminUid = "CzfcMrq7vnN8I1htcNLDnf7SIiA2";
 const app = initializeApp(config),
   auth = getAuth(app),
   db = getFirestore(app),
@@ -369,6 +370,7 @@ const addLearning = (area, subject, activities) =>
     ]) =>
       learningSeed.push({
         id: `learn-${learningSeed.length + 1}`,
+        person: "hunter",
         area,
         subject,
         name,
@@ -532,6 +534,489 @@ addLearning("Practical and creative", "Technology", [
 ]);
 seed.learningActivities = learningSeed;
 seed.learningSelections = [];
+const adultLibraryStart = learningSeed.length;
+
+const addPersonal = (
+  person,
+  area,
+  subject,
+  names,
+  minutes = 20,
+  energy = "calm",
+) =>
+  names.forEach((name) =>
+    learningSeed.push({
+      id: `wheel-${person}-${learningSeed.length + 1}`,
+      person,
+      area,
+      subject,
+      name,
+      minutes,
+      place: "either",
+      support: "independent",
+      energy,
+      active: true,
+    }),
+  );
+
+addPersonal("amelia", "GCSE focus", "Choose a subject", [
+  "Complete one focused revision block",
+  "Make a one-page topic summary",
+  "Use flashcards for one weak topic",
+  "Watch a lesson and make brief notes",
+]);
+addPersonal("amelia", "GCSE focus", "Exam technique", [
+  "Answer one exam question",
+  "Mark an old answer and improve it",
+  "Plan a longer answer without writing it fully",
+  "Learn what earns the next mark",
+]);
+addPersonal("amelia", "Creative", "Make something", [
+  "Start or continue a craft",
+  "Draw, paint or design something",
+  "Try clay, resin or another material",
+  "Make something for the scrapbook",
+]);
+addPersonal("amelia", "Reading and writing", "Quiet choice", [
+  "Read a chapter",
+  "Write privately for twenty minutes",
+  "Find and read a good long-form article",
+  "Write a letter, review or short story",
+]);
+addPersonal(
+  "amelia",
+  "Movement and outdoors",
+  "Move",
+  [
+    "Take a purposeful walk",
+    "Do a short workout or stretch",
+    "Walk the dog somewhere different",
+    "Try a yoga session",
+  ],
+  20,
+  "active",
+);
+addPersonal("amelia", "Spanish", "Language", [
+  "Learn ten useful words",
+  "Listen to Spanish and note what you recognise",
+  "Practise speaking for ten minutes",
+  "Translate a song verse or short paragraph",
+]);
+addPersonal("amelia", "Independence", "Useful life", [
+  "Cook or prepare something",
+  "Plan and price a meal",
+  "Sort one awkward pile or drawer",
+  "Do one job that helps tomorrow",
+]);
+addPersonal("amelia", "Reset and connect", "Change the mood", [
+  "Reset one part of the bedroom",
+  "Put the phone away and make a drink",
+  "Do something with Hunter",
+  "Suggest a family activity",
+]);
+
+addPersonal("david", "Languages", "French", [
+  "Learn and use ten French words",
+  "Complete one French lesson",
+  "Listen and repeat for fifteen minutes",
+  "Write a tiny diary entry in French",
+]);
+addPersonal("david", "Words and learning", "English and ideas", [
+  "Practise separate, achieve, receive and definitely",
+  "Read about an unfamiliar subject",
+  "Write or refine something",
+  "Learn five words from a dictionary",
+]);
+addPersonal(
+  "david",
+  "Movement",
+  "Exercise",
+  [
+    "Go for a run",
+    "Take a brisk walk",
+    "Cycle somewhere",
+    "Do a short strength session",
+  ],
+  20,
+  "active",
+);
+addPersonal("david", "Nature", "Observe and record", [
+  "Identify plants",
+  "Identify birds or insects",
+  "Take cuttings or propagate something",
+  "Add something to a nature scrapbook",
+]);
+addPersonal(
+  "david",
+  "Land and home",
+  "Useful work",
+  [
+    "Complete one fencing or digging job",
+    "Fix one irritating thing",
+    "Tidy one neglected space",
+    "Check or clean the car",
+  ],
+  20,
+  "active",
+);
+addPersonal("david", "Making", "Hands-on", [
+  "Make something from wood, clay or resin",
+  "Try a paper-folding project",
+  "Continue a creative project",
+  "Learn how to use a tool or technique",
+]);
+addPersonal("david", "Food", "Cook and explore", [
+  "Choose and cook a recipe",
+  "Bake something",
+  "Try a new food",
+  "Plan a meal using what is already available",
+]);
+addPersonal("david", "Family", "Shared time", [
+  "Read or learn something with Hunter",
+  "Do a small project with Amelia",
+  "Plan something Lydia would enjoy",
+  "Create or record a family memory",
+]);
+
+addPersonal("lydia", "PhD", "Gentle progress", [
+  "Work on one clearly bounded PhD task",
+  "Tidy one section or reference list",
+  "Write the next small paragraph",
+  "Make a short finishing plan",
+]);
+addPersonal("lydia", "PhD", "Closing down", [
+  "List what remains",
+  "Send or prepare one necessary message",
+  "Resolve one lingering note or comment",
+  "Choose tomorrow's first step",
+]);
+addPersonal(
+  "lydia",
+  "Movement",
+  "Gentle movement",
+  [
+    "Do a yoga session",
+    "Take a short walk",
+    "Stretch for ten minutes",
+    "Walk somewhere pleasant",
+  ],
+  20,
+  "active",
+);
+addPersonal("lydia", "Garden and outdoors", "Outside", [
+  "Do one small gardening job",
+  "Choose or tend a plant",
+  "Sit outside with a drink and a book",
+  "Take a short nature walk",
+]);
+addPersonal("lydia", "Creative", "Make or enjoy", [
+  "Continue a craft",
+  "Try a small creative idea",
+  "Take photographs",
+  "Make something for the scrapbook",
+]);
+addPersonal("lydia", "Reading and learning", "Quiet interest", [
+  "Read a chapter",
+  "Read something unrelated to the PhD",
+  "Listen to a thoughtful podcast",
+  "Learn about something chosen purely from interest",
+]);
+addPersonal("lydia", "Home", "Light reset", [
+  "Tidy one surface",
+  "Sort one drawer or small pile",
+  "Do one job that makes tomorrow easier",
+  "Choose one room improvement",
+]);
+addPersonal("lydia", "Wellbeing and family", "Choose kindly", [
+  "Have proper time alone without work",
+  "Do something with Hunter",
+  "Suggest a family activity",
+  "Plan something enjoyable with David",
+]);
+
+addPersonal("amelia", "GCSE focus", "Recall and review", [
+  "Test yourself without notes",
+  "Teach a difficult idea aloud",
+  "Make five strong flashcards",
+]);
+addPersonal("amelia", "Creative", "Try something different", [
+  "Learn a new craft technique",
+  "Design something digitally",
+  "Turn an ordinary object into something interesting",
+]);
+addPersonal("amelia", "Reading and writing", "Express an idea", [
+  "Write a thoughtful journal page",
+  "Review a book, film or place",
+  "Create a short piece inspired by a photograph",
+]);
+addPersonal(
+  "amelia",
+  "Movement and outdoors",
+  "Fresh air",
+  [
+    "Explore a new footpath",
+    "Take photographs on a walk",
+    "Walk while listening to music or a podcast",
+  ],
+  20,
+  "active",
+);
+addPersonal("amelia", "Spanish", "Culture and listening", [
+  "Find a Spanish recipe, place or tradition",
+  "Watch a short Spanish-language clip",
+  "Build a playlist of Spanish-language music",
+]);
+addPersonal("amelia", "Independence", "Plan ahead", [
+  "Organise something for next week",
+  "Research a future purchase or trip",
+  "Learn one useful household skill",
+]);
+addPersonal("amelia", "Reset and connect", "Screen-free choice", [
+  "Read, craft or make something for half an hour",
+  "Do something downstairs with the family",
+  "Choose a job, finish it and enjoy the result",
+]);
+addPersonal("amelia", "GCSE focus", "Subject rotation", [
+  "Choose the subject not studied recently",
+  "Revisit a mock-paper weakness",
+  "Improve one grade-8 answer towards grade 9",
+]);
+
+addPersonal("david", "Languages", "Language in use", [
+  "Label useful things in French",
+  "Translate signs, menus or packaging",
+  "Have a tiny spoken French exchange",
+]);
+addPersonal("david", "Words and learning", "Curiosity", [
+  "Follow one interesting question",
+  "Read a chapter of non-fiction",
+  "Make notes on something worth remembering",
+]);
+addPersonal(
+  "david",
+  "Movement",
+  "Outdoors",
+  [
+    "Walk a new footpath",
+    "Ride somewhere without a destination",
+    "Combine exercise with an errand",
+  ],
+  20,
+  "active",
+);
+addPersonal("david", "Nature", "Grow and collect", [
+  "Press or photograph a specimen",
+  "Propagate a plant",
+  "Start or improve a labelled collection",
+]);
+addPersonal("david", "Land and home", "Maintain", [
+  "Inspect something before it becomes a problem",
+  "Complete a small outdoor repair",
+  "Improve one practical system",
+]);
+addPersonal("david", "Making", "Experiment", [
+  "Try resin, clay or salt dough",
+  "Take something apart to understand it",
+  "Prototype an idea using scrap materials",
+]);
+addPersonal("david", "Food", "Find and try", [
+  "Visit a shop for an unfamiliar ingredient",
+  "Learn one French cooking term or technique",
+  "Make something Hunter can help with",
+]);
+addPersonal("david", "Family", "Record and remember", [
+  "Add a proper scrapbook memory",
+  "Interview someone about the day",
+  "Photograph an ordinary family moment well",
+]);
+
+addPersonal("lydia", "PhD", "Review and decide", [
+  "Read one section as an examiner might",
+  "Resolve one decision instead of postponing it",
+  "Separate essential finishing work from optional polishing",
+]);
+addPersonal(
+  "lydia",
+  "Movement",
+  "Restore",
+  [
+    "Choose a short restorative yoga practice",
+    "Walk without turning it into an errand",
+    "Move gently while listening to something enjoyable",
+  ],
+  20,
+  "active",
+);
+addPersonal("lydia", "Garden and outdoors", "Tend and notice", [
+  "Notice what has changed in the garden",
+  "Tend one small area",
+  "Choose something to grow or improve",
+]);
+addPersonal("lydia", "Creative", "Play without an outcome", [
+  "Experiment with a material",
+  "Arrange or photograph something beautiful",
+  "Return to an unfinished creative idea",
+]);
+addPersonal("lydia", "Reading and learning", "Follow curiosity", [
+  "Read about something chosen at random",
+  "Listen to an interview or lecture",
+  "Save and summarise one interesting idea",
+]);
+addPersonal("lydia", "Home", "Make a space nicer", [
+  "Improve one visible corner",
+  "Remove or relocate five unnecessary things",
+  "Do a small job with an immediate payoff",
+]);
+addPersonal("lydia", "Wellbeing and family", "Enjoyable time", [
+  "Choose something purely because it sounds pleasant",
+  "Share a drink, walk or programme with someone",
+  "Plan one thing to look forward to",
+]);
+addPersonal("lydia", "Garden and outdoors", "Gentle project", [
+  "Plan a small planting idea",
+  "Photograph the garden through the season",
+  "Do ten minutes, then freely decide whether to stop",
+]);
+
+const expandedHunterStart = learningSeed.length;
+addLearning("English", "Spelling", [
+  ["Sort words into spelling patterns", 10],
+  ["Make a word ladder", 10],
+  ["Find and practise homophones", 10],
+]);
+addLearning("English", "Reading", [
+  ["Choose and read some non-fiction", 20],
+  ["Find three clues about a character", 10],
+  ["Read with different voices", 10, "indoors", "together", "active"],
+]);
+addLearning("English", "Writing", [
+  ["Write a six-sentence adventure", 20],
+  ["Caption a sequence of photographs", 10],
+  ["Invent an advert for an ordinary object", 10],
+]);
+addLearning("English", "Vocabulary", [
+  ["Create a word-of-the-day poster", 10],
+  ["Find synonyms for five everyday words", 10],
+  ["Play a category word race", 5, "indoors", "together", "active"],
+]);
+addLearning("Maths", "Number", [
+  ["Create and solve a number puzzle", 10],
+  ["Practise counting in 2s, 5s and 10s", 10],
+  ["Estimate a collection then count it", 10],
+]);
+addLearning("Maths", "Fractions", [
+  ["Design a fraction pizza", 10],
+  ["Compare halves, quarters and thirds", 10],
+  ["Make a fraction matching game", 20],
+]);
+addLearning("Maths", "Shape and measure", [
+  ["Build the tallest paper tower", 20, "indoors", "together", "active"],
+  ["Time three household activities", 10],
+  ["Find lines of symmetry", 10],
+]);
+addLearning("Maths", "Money", [
+  ["Run a pretend shop", 20, "indoors", "together", "active"],
+  ["Work out change from £1 and £5", 10],
+  ["Compare a UK and French price", 10],
+]);
+addLearning("Science", "Plants", [
+  ["Make a leaf identification page", 20, "outdoors"],
+  ["Test what a plant needs", 20, "either", "together", "messy"],
+]);
+addLearning("Science", "Animals", [
+  ["Make a simple habitat survey", 20, "outdoors", "together", "active"],
+  ["Group animals by their features", 10],
+  ["Invent a creature suited to a habitat", 20],
+]);
+addLearning("Science", "Human body", [
+  [
+    "Test balance with eyes open and closed",
+    10,
+    "either",
+    "together",
+    "active",
+  ],
+  ["Measure and compare reaction times", 10, "indoors", "together", "active"],
+]);
+addLearning("Science", "Materials and forces", [
+  ["Test which paper bridge is strongest", 20, "indoors", "together", "active"],
+  ["Make a waterproofing investigation", 20, "outdoors", "together", "messy"],
+  ["Explore shadows with a torch", 10],
+]);
+addLearning("The world", "Geography", [
+  ["Make a compass-direction challenge", 10, "outdoors", "together", "active"],
+  ["Compare two places using photographs", 10],
+  ["Create a treasure map", 20],
+]);
+addLearning("The world", "Geology", [
+  ["Sort rocks by visible properties", 10, "outdoors"],
+  ["Model layers of the Earth", 20, "indoors", "together", "messy"],
+]);
+addLearning("The world", "History", [
+  ["Make a timeline of five events", 20],
+  ["Investigate one historical object", 10],
+  ["Imagine a diary entry from Roman Britain", 20],
+]);
+addLearning("The world", "French", [
+  ["Make a French picture dictionary", 20],
+  ["Play a French word treasure hunt", 10, "either", "together", "active"],
+  ["Learn a short French rhyme", 10],
+]);
+addLearning("Practical and creative", "Cooking", [
+  ["Design a healthy snack", 10],
+  ["Compare tastes and textures", 10, "indoors", "together", "messy"],
+  ["Learn one safe kitchen skill", 10, "indoors", "together"],
+]);
+addLearning("Practical and creative", "Making", [
+  ["Build a bridge from scrap materials", 20, "indoors", "together", "messy"],
+  [
+    "Create a collage from found textures",
+    20,
+    "either",
+    "independent",
+    "messy",
+  ],
+]);
+addLearning("Practical and creative", "Life skills", [
+  ["Learn to fold and put away clothes", 10],
+  ["Make a checklist for leaving the house", 10],
+  ["Learn one basic first-aid fact", 10, "indoors", "together"],
+]);
+addLearning("Practical and creative", "Technology", [
+  ["Take photographs that show a process", 10, "either", "independent"],
+  ["Make a simple stop-motion sequence", 20],
+  [
+    "Give precise instructions to a human robot",
+    10,
+    "indoors",
+    "together",
+    "active",
+  ],
+]);
+const expandedHunterSeed = learningSeed.slice(expandedHunterStart);
+const adultLearningSeed = learningSeed.slice(
+  adultLibraryStart,
+  expandedHunterStart,
+);
+const expandedArea = (item) => {
+  if ((item.person || "hunter") !== "hunter") return item;
+  if (["Plants", "Animals"].includes(item.subject))
+    return { ...item, area: "Nature and outdoors" };
+  if (["Geography", "History", "Geology"].includes(item.subject))
+    return { ...item, area: "Geography and history" };
+  if (item.subject === "French") return { ...item, area: "French and France" };
+  if (["Cooking", "Life skills"].includes(item.subject))
+    return { ...item, area: "Practical skills" };
+  if (["Making", "Technology"].includes(item.subject))
+    return { ...item, area: "Creative and technology" };
+  return item;
+};
+for (let i = 0; i < learningSeed.length; i++)
+  learningSeed[i] = expandedArea(learningSeed[i]);
+
+seed.learningActivities = learningSeed;
+seed.wheelLibraryVersion = 3;
+seed.wheelHistory = {};
 
 let data = structuredClone(seed),
   currentPerson = "hunter",
@@ -549,10 +1034,23 @@ async function save() {
 async function startData() {
   const snap = await getDoc(stateRef);
   if (!snap.exists()) await setDoc(stateRef, seed);
-  else if (!snap.data().learningActivities) {
+  else if ((snap.data().wheelLibraryVersion || 0) < 3) {
+    const version = snap.data().wheelLibraryVersion || 0;
+    let activities = (snap.data().learningActivities || []).map((item) => ({
+      ...item,
+      person: item.person || "hunter",
+    }));
+    if (version < 2) activities.push(...adultLearningSeed);
+    if (version < 3) activities.push(...expandedHunterSeed);
+    activities = activities.map(expandedArea);
     await setDoc(
       stateRef,
-      { learningActivities: learningSeed, learningSelections: [] },
+      {
+        learningActivities: activities,
+        learningSelections: snap.data().learningSelections || [],
+        wheelHistory: snap.data().wheelHistory || {},
+        wheelLibraryVersion: 3,
+      },
       { merge: true },
     );
   }
@@ -619,6 +1117,10 @@ function bind() {
     learningPath = [];
     renderLearningWheel();
   };
+  $("#learningRespin").onclick = () => {
+    learningPendingChoice = null;
+    renderLearningWheel();
+  };
   ["learnTime", "learnPlace", "learnSupport", "learnEnergy"].forEach(
     (id) =>
       ($(`#${id}`).onchange = () => {
@@ -651,7 +1153,9 @@ function bind() {
       await setPersistence(auth, browserLocalPersistence);
       await signInWithEmailAndPassword(
         auth,
-        $("#loginEmail").value,
+        $("#loginEmail").value.includes("@")
+          ? $("#loginEmail").value.trim()
+          : `${$("#loginEmail").value.trim().toLowerCase()}@our-days.family`,
         $("#loginPassword").value,
       );
     } catch {
@@ -711,24 +1215,47 @@ function renderToday() {
     (c) => (c.onchange = () => toggleTask(c.dataset.task, c.checked)),
   );
 }
+const wheelProfiles = {
+  hunter: {
+    title: "Today's learning",
+    button: "Spin the learning wheel",
+    eyebrow: "HUNTER'S LEARNING WHEEL",
+    tagline: "Area → subject → activity",
+  },
+  amelia: {
+    title: "Choose something for today",
+    button: "Spin Amelia's wheel",
+    eyebrow: "AMELIA'S CHOICE WHEEL",
+    tagline: "Area → direction → activity",
+  },
+  david: {
+    title: "What shall I do?",
+    button: "Spin David's wheel",
+    eyebrow: "DAVID'S ACTIVITY WHEEL",
+    tagline: "Area → direction → activity",
+  },
+  lydia: {
+    title: "An optional nudge",
+    button: "Spin Lydia's wheel",
+    eyebrow: "LYDIA'S CHOICE WHEEL",
+    tagline: "Area → direction → activity",
+  },
+};
 function todayLearningSelection() {
   return (data.learningSelections || []).find(
-    (item) => item.person === "hunter" && item.date === todayKey(),
+    (item) => item.person === currentPerson && item.date === todayKey(),
   );
 }
 function renderLearningToday() {
-  const host = $("#learningToday");
-  if (currentPerson !== "hunter") {
-    host.innerHTML = "";
-    return;
-  }
-  const selection = todayLearningSelection(),
+  const host = $("#learningToday"),
+    profile = wheelProfiles[currentPerson],
+    selection = todayLearningSelection(),
     activity =
       selection &&
       data.learningActivities.find((item) => item.id === selection.activityId),
-    taskId = `learning-${todayKey()}`,
+    taskId = `wheel-${currentPerson}-${todayKey()}`,
     done = completed(taskId);
-  host.innerHTML = `<section class="task-section learning-today"><div class="learning-title"><h3>Today's learning</h3><button class="text-link" id="chooseLearning">${activity ? "Choose again" : "Spin the learning wheel"}</button></div>${activity ? `<label class="task ${done ? "done" : ""}"><input type="checkbox" id="learningComplete" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(activity.name)}</span><small>${esc(activity.area)} · ${esc(activity.subject)} · ${activity.minutes} minutes</small></span><span class="points">+5</span></label>` : `<button class="learning-launch" id="learningLaunch"><strong>Let the wheels decide</strong><span>Area → subject → activity</span></button>`}</section>`;
+  host.innerHTML = `<section class="task-section learning-today"><div class="learning-title"><h3>${profile.title}</h3><button class="text-link" id="chooseLearning">${activity ? "Choose again" : profile.button}</button></div>${activity ? `<label class="task ${done ? "done" : ""}"><input type="checkbox" id="learningComplete" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(activity.name)}</span><small>${esc(activity.area)} · ${esc(activity.subject)} · ${activity.minutes} minutes</small></span><span class="points">+5</span></label>` : `<button class="learning-launch" id="learningLaunch"><span class="mini-wheel" aria-hidden="true"></span><span class="launch-copy"><strong>${profile.button}</strong><span>${profile.tagline}</span></span></button>`}</section>`;
   const open = () => openLearningWheel();
   $("#chooseLearning").onclick = open;
   if ($("#learningLaunch")) $("#learningLaunch").onclick = open;
@@ -737,14 +1264,14 @@ function renderLearningToday() {
       toggleLearningComplete(event.target.checked);
 }
 function toggleLearningComplete(on) {
-  const taskId = `learning-${todayKey()}`;
+  const taskId = `wheel-${currentPerson}-${todayKey()}`;
   data.completions = data.completions.filter(
     (item) => !(item.taskId === taskId && item.date === todayKey()),
   );
   if (on)
     data.completions.push({
       taskId,
-      person: "hunter",
+      person: currentPerson,
       date: todayKey(),
       points: 5,
       choice: todayLearningSelection()?.activityId || "",
@@ -755,6 +1282,7 @@ function openLearningWheel() {
   learningPath = [];
   learningPendingChoice = null;
   $("#learningDialog").showModal();
+  $("#wheelEyebrow").textContent = wheelProfiles[currentPerson].eyebrow;
   renderLearningWheel();
 }
 function eligibleLearning() {
@@ -765,6 +1293,7 @@ function eligibleLearning() {
   return (data.learningActivities || []).filter(
     (item) =>
       item.active &&
+      (item.person || "hunter") === currentPerson &&
       (time === "any" || item.minutes === +time) &&
       (place === "any" || item.place === "either" || item.place === place) &&
       (support === "any" ||
@@ -810,6 +1339,8 @@ function renderLearningWheel() {
   $("#learningSpin").disabled = !options.length || learningSpinning;
   $("#learningSpin").textContent = "Spin";
   $("#learningResult").hidden = true;
+  $("#activityDetail").hidden = true;
+  $("#learningRespin").hidden = true;
   $$("[data-learning-step]").forEach((step) => {
     const index = +step.dataset.learningStep;
     step.classList.toggle("active", index === stage);
@@ -826,10 +1357,16 @@ function renderLearningWheel() {
     "#4f8da0",
   ];
   const size = options.length ? 360 / options.length : 360;
+  wheel.classList.toggle("dense", options.length >= 7);
+  wheel.style.setProperty(
+    "--wheel-radius",
+    options.length >= 7 ? "min(28vw, 128px)" : "min(24vw, 112px)",
+  );
   wheel.style.background = options.length
     ? `conic-gradient(${options.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
     : "#d9ddd7";
   wheel.style.setProperty("--counter-rotation", "0deg");
+  wheel.style.transition = "none";
   wheel.style.transform = "rotate(0deg)";
   wheel.innerHTML = options.length
     ? options
@@ -839,6 +1376,94 @@ function renderLearningWheel() {
         })
         .join("")
     : '<span class="wheel-empty">No matching activities</span>';
+  void wheel.offsetWidth;
+  wheel.style.transition = "";
+}
+function chooseWheelOption(options, stage) {
+  data.wheelHistory ||= {};
+  const key = [currentPerson, stage, ...learningPath].join("|");
+  let history = (data.wheelHistory[key] || []).filter((value) =>
+    options.includes(value),
+  );
+  let available = options.filter((value) => !history.includes(value));
+  if (!available.length) {
+    history = [];
+    available = [...options];
+  }
+  const chosen = available[Math.floor(Math.random() * available.length)];
+  data.wheelHistory[key] = [...history, chosen];
+  return chosen;
+}
+function activityForPath(name) {
+  return data.learningActivities.find(
+    (item) =>
+      (item.person || "hunter") === currentPerson &&
+      item.active &&
+      item.area === learningPath[0] &&
+      item.subject === learningPath[1] &&
+      item.name === name,
+  );
+}
+function activityInstructions(activity) {
+  const name = activity.name,
+    minutes = activity.minutes;
+  let what = `Spend about ${minutes} minutes on “${name}”. Keep it small enough to begin immediately.`;
+  let needs =
+    "Use whatever you would normally need; improvise with what is already available.";
+  let finished = "Finish by showing, explaining or recording what you did.";
+  if (/foil boat/i.test(name)) {
+    what =
+      "Make a boat from one sheet of foil. Predict how many coins it will hold, test it, then improve the design and try again.";
+    needs = "A sheet of foil, coins and a bowl or sink of water.";
+    finished = "Record the totals for both designs.";
+  } else if (/bubble/i.test(name)) {
+    what =
+      "Mix a small bubble solution, test it, then change one thing and compare the bubbles.";
+    needs = "Water, washing-up liquid, a container and a bubble wand or loop.";
+    finished = "Say which mixture worked better and why you think it did.";
+  } else if (/spelling test/i.test(name)) {
+    what =
+      "Choose a short set of useful or tricky words. Read each aloud, write it from memory, then correct mistakes in a different colour.";
+    needs = "Paper, pencil and a short word list.";
+    finished = "Practise every word that was initially incorrect.";
+  } else if (/bird watch/i.test(name)) {
+    what =
+      "Watch quietly for five minutes. Count the birds and identify as many as possible by shape, colour or call.";
+    needs = "A window or outdoor spot; optionally binoculars or a bird guide.";
+    finished = "Record at least three observations.";
+  } else if (/revision block/i.test(name)) {
+    what =
+      "Choose one GCSE subject and one precise topic. Work without the phone until the timer ends, producing something you can review later.";
+    needs = "The relevant book, notes or revision site and a timer.";
+    finished =
+      "Produce a page of notes, completed questions or reviewed flashcards.";
+  } else if (/exam question/i.test(name)) {
+    what =
+      "Choose one suitable past-paper question, answer it under sensible time pressure, then check it against the mark scheme.";
+    needs = "A question, paper or document, timer and mark scheme.";
+    finished = "Identify one specific improvement for the next answer.";
+  } else if (/PhD/i.test(name)) {
+    what = `Define one small, concrete result that can be completed in about ${minutes} minutes, then work only on that result.`;
+    needs = "The relevant document, notes or reference manager.";
+    finished = "Leave a clear note stating the next action.";
+  } else if (/recipe|cook|bake|meal|snack/i.test(name)) {
+    what = `Choose a manageable food task and complete as much as is sensible in about ${minutes} minutes.`;
+    needs = "A recipe if useful, ingredients and normal kitchen equipment.";
+    finished =
+      "Food is prepared, or the recipe and ingredients are ready for the next step.";
+  } else if (/photograph|photographs/i.test(name)) {
+    what =
+      "Take a small, purposeful set of photographs that tells a story or records useful details.";
+    needs = "A phone or camera.";
+    finished = "Choose the best images and add captions or a scrapbook note.";
+  }
+  return { what, needs, finished };
+}
+function showActivityDetail(activity) {
+  const detail = activityInstructions(activity),
+    panel = $("#activityDetail");
+  panel.innerHTML = `<h4>${esc(activity.name)}</h4><p class="detail-meta">${activity.minutes} minutes · ${esc(activity.place)} · ${activity.support === "together" ? "with someone" : esc(activity.support)} · ${esc(activity.energy)}</p><dl><div><dt>What to do</dt><dd>${esc(detail.what)}</dd></div><div><dt>What you need</dt><dd>${esc(detail.needs)}</dd></div><div><dt>Finished when</dt><dd>${esc(detail.finished)}</dd></div></dl>`;
+  panel.hidden = false;
 }
 function spinLearning() {
   if (learningSpinning) return;
@@ -855,8 +1480,8 @@ function spinLearning() {
   $("#learningSpin").disabled = true;
   $("#learningSpin").textContent = "Spinning…";
   $("#learningResult").hidden = true;
-  const chosenIndex = Math.floor(Math.random() * options.length),
-    chosen = options[chosenIndex],
+  const chosen = chooseWheelOption(options, learningPath.length),
+    chosenIndex = options.indexOf(chosen),
     segment = 360 / options.length,
     target = 2880 - (chosenIndex + 0.5) * segment,
     wheel = $("#learningWheel"),
@@ -870,6 +1495,11 @@ function spinLearning() {
     const result = $("#learningResult");
     result.textContent = `The wheel chose: ${chosen}`;
     result.hidden = false;
+    if (stage === 2) {
+      const activity = activityForPath(chosen);
+      if (activity) showActivityDetail(activity);
+      $("#learningRespin").hidden = false;
+    }
     $("#learningSpin").textContent =
       stage === 0
         ? "Continue to subject"
@@ -877,12 +1507,13 @@ function spinLearning() {
           ? "Continue to activity"
           : "Use this activity";
     $("#learningSpin").disabled = false;
-  }, 4800);
+  }, 7800);
 }
 function selectLearningActivity() {
   const [area, subject, name] = learningPath,
     activity = data.learningActivities.find(
       (item) =>
+        (item.person || "hunter") === currentPerson &&
         item.active &&
         item.area === area &&
         item.subject === subject &&
@@ -890,16 +1521,19 @@ function selectLearningActivity() {
     );
   if (!activity) return;
   data.learningSelections = (data.learningSelections || []).filter(
-    (item) => !(item.person === "hunter" && item.date === todayKey()),
+    (item) => !(item.person === currentPerson && item.date === todayKey()),
   );
   data.learningSelections.push({
-    person: "hunter",
+    person: currentPerson,
     date: todayKey(),
     activityId: activity.id,
   });
   data.completions = data.completions.filter(
     (item) =>
-      !(item.taskId === `learning-${todayKey()}` && item.date === todayKey()),
+      !(
+        item.taskId === `wheel-${currentPerson}-${todayKey()}` &&
+        item.date === todayKey()
+      ),
   );
   save();
   $("#learningDialog").close();
@@ -1155,10 +1789,10 @@ function renderManage() {
 function renderLearningManage() {
   const items = data.learningActivities || [];
   $("#manageTable").innerHTML =
-    `<p class="muted small">Each row is one possible final result. Areas and subjects automatically become the first two wheels.</p><div class="table-wrap"><table class="manage-table"><thead><tr><th>Order</th><th>Area</th><th>Subject</th><th>Activity</th><th>Min</th><th>Place</th><th>Help</th><th>Style</th><th>Active</th><th></th></tr></thead><tbody>${items
+    `<p class="muted small">Each row is one possible final result. Areas and subjects automatically become the first two wheels.</p><div class="table-wrap"><table class="manage-table"><thead><tr><th>Order</th><th>Person</th><th>Area</th><th>Subject</th><th>Activity</th><th>Min</th><th>Place</th><th>Help</th><th>Style</th><th>Active</th><th></th></tr></thead><tbody>${items
       .map(
         (item, i) =>
-          `<tr><td class="row-actions"><button data-move="up" data-i="${i}" ${i === 0 ? "disabled" : ""}>↑</button><button data-move="down" data-i="${i}" ${i === items.length - 1 ? "disabled" : ""}>↓</button></td><td><input data-field="area" data-i="${i}" value="${esc(item.area)}"></td><td><input data-field="subject" data-i="${i}" value="${esc(item.subject)}"></td><td><input data-field="name" data-i="${i}" value="${esc(item.name)}"></td><td><select data-field="minutes" data-i="${i}">${options(
+          `<tr><td class="row-actions"><button data-move="up" data-i="${i}" ${i === 0 ? "disabled" : ""}>↑</button><button data-move="down" data-i="${i}" ${i === items.length - 1 ? "disabled" : ""}>↓</button></td><td><select data-field="person" data-i="${i}">${data.people.map((person) => `<option value="${person.id}" ${(item.person || "hunter") === person.id ? "selected" : ""}>${esc(person.name)}</option>`).join("")}</select></td><td><input data-field="area" data-i="${i}" value="${esc(item.area)}"></td><td><input data-field="subject" data-i="${i}" value="${esc(item.subject)}"></td><td><input data-field="name" data-i="${i}" value="${esc(item.name)}"></td><td><select data-field="minutes" data-i="${i}">${options(
             [
               [5, "5"],
               [10, "10"],
@@ -1176,7 +1810,7 @@ function renderLearningManage() {
             [
               ["either", "Either"],
               ["independent", "Independent"],
-              ["together", "With Daddy"],
+              ["together", "With someone"],
             ],
             item.support,
           )}</select></td><td><select data-field="energy" data-i="${i}">${options(
@@ -1243,7 +1877,7 @@ function addRow() {
     data.tasks.push({
       id: crypto.randomUUID(),
       name: "New task",
-      person: "hunter",
+      person: currentPerson,
       category: "Other",
       kind: "optional",
       frequency: "daily",
@@ -1268,9 +1902,11 @@ function addRow() {
 initUI();
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    $("#settingsButton").hidden = user.uid !== adminUid;
     $("#loginScreen").classList.add("hidden");
     await startData();
   } else {
+    $("#settingsButton").hidden = true;
     ready = false;
     unsubscribe?.();
     $("#loginScreen").classList.remove("hidden");

@@ -177,7 +177,7 @@
       <form method="dialog">
         <div class="learning-head">
           <div>
-            <p class="eyebrow">HUNTER'S LEARNING WHEEL</p>
+            <p class="eyebrow" id="wheelEyebrow">ACTIVITY WHEEL</p>
             <h3 id="learningStageTitle">Choose the area</h3>
           </div>
           <button class="secondary" value="cancel" aria-label="Close">
@@ -213,7 +213,7 @@
             >Help<select id="learnSupport">
               <option value="any">Either</option>
               <option value="independent">Independent</option>
-              <option value="together">With Daddy</option>
+              <option value="together">With someone</option>
             </select></label
           >
           <label
@@ -230,6 +230,7 @@
           <div id="learningWheel" class="learning-wheel"></div>
         </div>
         <div id="learningResult" class="learning-result" hidden></div>
+        <div id="activityDetail" class="activity-detail" hidden></div>
         <p id="learningBreadcrumb" class="learning-breadcrumb"></p>
         <div class="learning-actions">
           <button type="button" class="secondary" id="learningBack">
@@ -237,6 +238,9 @@
           </button>
           <button type="button" class="secondary" id="learningRestart">
             Start again
+          </button>
+          <button type="button" class="secondary" id="learningRespin" hidden>
+            Spin this level again
           </button>
           <button type="button" class="primary" id="learningSpin">Spin</button>
         </div>
@@ -269,9 +273,9 @@
         <h1>Our Days</h1>
         <p>Sign in to your private family planner and scrapbook.</p>
         <label
-          >Email<input
+          >Username or email<input
             id="loginEmail"
-            type="email"
+            type="text"
             autocomplete="username"
             required /></label
         ><label
