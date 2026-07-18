@@ -1025,6 +1025,8 @@ let data = structuredClone(seed),
   learningPath = [],
   learningPendingChoice = null,
   learningSpinning = false,
+  outingSpinning = false,
+  lastOutingId = null,
   unsubscribe = null,
   ready = false;
 
@@ -1082,6 +1084,10 @@ function bind() {
   $("#signOutButton").onclick = () => signOut(auth);
   $("#personSelect").onchange = (e) => {
     currentPerson = e.target.value;
+    learningPath = [];
+    learningPendingChoice = null;
+    learningSpinning = false;
+    if ($("#learningDialog").open) $("#learningDialog").close();
     renderToday();
   };
   $("#changePlan").onclick = () => {
@@ -1321,8 +1327,16 @@ function learningOptions() {
     )
     .map((item) => item.name);
 }
+function wheelSegments(options) {
+  if (options.length < 2 || options.length > 4) return [...options];
+  return Array.from(
+    { length: Math.ceil(8 / options.length) },
+    () => options,
+  ).flat();
+}
 function renderLearningWheel() {
   const options = learningOptions(),
+    displayOptions = wheelSegments(options),
     wheel = $("#learningWheel"),
     stage = learningPath.length;
   learningPendingChoice = null;
@@ -1356,20 +1370,20 @@ function renderLearningWheel() {
     "#7867a8",
     "#4f8da0",
   ];
-  const size = options.length ? 360 / options.length : 360;
-  wheel.classList.toggle("dense", options.length >= 7);
+  const size = displayOptions.length ? 360 / displayOptions.length : 360;
+  wheel.classList.toggle("dense", displayOptions.length >= 7);
   wheel.style.setProperty(
     "--wheel-radius",
-    options.length >= 7 ? "min(28vw, 128px)" : "min(24vw, 112px)",
+    displayOptions.length >= 7 ? "min(29vw, 205px)" : "min(26vw, 180px)",
   );
-  wheel.style.background = options.length
-    ? `conic-gradient(${options.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+  wheel.style.background = displayOptions.length
+    ? `conic-gradient(${displayOptions.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
     : "#d9ddd7";
   wheel.style.setProperty("--counter-rotation", "0deg");
   wheel.style.transition = "none";
   wheel.style.transform = "rotate(0deg)";
-  wheel.innerHTML = options.length
-    ? options
+  wheel.innerHTML = displayOptions.length
+    ? displayOptions
         .map((label, i) => {
           const angle = (i + 0.5) * size;
           return `<span class="wheel-option" style="--angle:${angle}deg">${esc(label)}</span>`;
@@ -1481,8 +1495,13 @@ function spinLearning() {
   $("#learningSpin").textContent = "Spinning…";
   $("#learningResult").hidden = true;
   const chosen = chooseWheelOption(options, learningPath.length),
-    chosenIndex = options.indexOf(chosen),
-    segment = 360 / options.length,
+    displayOptions = wheelSegments(options),
+    matchingIndices = displayOptions
+      .map((value, index) => (value === chosen ? index : -1))
+      .filter((index) => index >= 0),
+    chosenIndex =
+      matchingIndices[Math.floor(Math.random() * matchingIndices.length)],
+    segment = 360 / displayOptions.length,
     target = 2880 - (chosenIndex + 0.5) * segment,
     wheel = $("#learningWheel"),
     stage = learningPath.length;
@@ -1586,34 +1605,77 @@ function eligible(o) {
   );
 }
 function renderOutings() {
-  const list = data.outings.filter(
-      (o) => o.location === $("#locationFilter").value,
-    ),
-    n = list.filter(eligible).length;
-  $("#eligibleCount").textContent = `${n} available`;
-  $("#outingList").innerHTML = list
-    .map(
-      (o) =>
-        `<div class="outing ${eligible(o) ? "" : "ineligible"}"><div><strong>${o.name}</strong><p>${o.time} · ${o.weather} weather · ${o.cost}</p></div><span class="tag">${o.repeat}</span></div>`,
-    )
-    .join("");
+  const options = data.outings.filter(eligible),
+    displayOptions = wheelSegments(options.map((item) => item.name)),
+    wheel = $("#wheel"),
+    colours = [
+      "#176b5b",
+      "#e7b84b",
+      "#e16b55",
+      "#789f91",
+      "#263d5b",
+      "#c78d31",
+      "#7867a8",
+      "#4f8da0",
+    ],
+    size = displayOptions.length ? 360 / displayOptions.length : 360;
+  wheel.classList.toggle("dense", displayOptions.length >= 7);
+  wheel.style.setProperty(
+    "--wheel-radius",
+    displayOptions.length >= 7 ? "min(31vw, 205px)" : "min(27vw, 180px)",
+  );
+  wheel.style.setProperty("--counter-rotation", "0deg");
+  wheel.style.transition = "none";
+  wheel.style.transform = "rotate(0deg)";
+  wheel.style.background = displayOptions.length
+    ? `conic-gradient(${displayOptions.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+    : "#d9ddd7";
+  wheel.innerHTML = displayOptions.length
+    ? displayOptions
+        .map(
+          (label, i) =>
+            `<span class="wheel-option" style="--angle:${(i + 0.5) * size}deg">${esc(label)}</span>`,
+        )
+        .join("")
+    : '<span class="wheel-empty">No matching outings</span>';
+  void wheel.offsetWidth;
+  wheel.style.transition = "";
+  $("#spinButton").disabled = !options.length || outingSpinning;
+  $("#spinButton").textContent = "Spin the wheel";
+  $("#outingResult").hidden = true;
 }
 function spin() {
   const options = data.outings.filter(eligible);
-  if (!options.length) {
-    $("#wheelLabel").textContent = "No matches";
-    return;
-  }
-  const choice = options[Math.floor(Math.random() * options.length)],
+  if (!options.length || outingSpinning) return;
+  const available =
+      options.length > 1
+        ? options.filter((item) => item.id !== lastOutingId)
+        : options,
+    choice = available[Math.floor(Math.random() * available.length)],
+    displayOptions = wheelSegments(options.map((item) => item.name)),
+    indices = displayOptions
+      .map((name, index) => (name === choice.name ? index : -1))
+      .filter((index) => index >= 0),
+    chosenIndex = indices[Math.floor(Math.random() * indices.length)],
+    segment = 360 / displayOptions.length,
+    target = 2880 - (chosenIndex + 0.5) * segment,
     wheel = $("#wheel");
-  wheel.classList.remove("spinning");
-  void wheel.offsetWidth;
-  wheel.classList.add("spinning");
-  $("#wheelLabel").textContent = "Spinning…";
+  outingSpinning = true;
+  lastOutingId = choice.id;
+  $("#spinButton").disabled = true;
+  $("#spinButton").textContent = "Spinning…";
+  $("#outingResult").hidden = true;
+  wheel.style.setProperty("--counter-rotation", "0deg");
+  wheel.style.transform = `rotate(${target}deg)`;
   setTimeout(() => {
-    $("#wheelLabel").textContent = choice.name;
-    wheel.classList.remove("spinning");
-  }, 2200);
+    outingSpinning = false;
+    wheel.style.setProperty("--counter-rotation", `${-target}deg`);
+    const result = $("#outingResult");
+    result.innerHTML = `<strong>${esc(choice.name)}</strong><br><span>${esc(choice.time)} · ${esc(choice.weather)} weather · ${esc(choice.cost)}</span>`;
+    result.hidden = false;
+    $("#spinButton").disabled = false;
+    $("#spinButton").textContent = "Spin again";
+  }, 7800);
 }
 function renderProgress() {
   const totals = Object.fromEntries(

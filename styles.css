@@ -218,7 +218,9 @@ textarea {
   box-shadow: 0 5px 14px #173b3325;
 }
 .learning-dialog {
-  width: min(94vw, 780px);
+  width: min(96vw, 1040px);
+  max-height: 96vh;
+  overflow: auto;
 }
 .learning-head {
   display: flex;
@@ -282,10 +284,10 @@ textarea {
   display: grid;
   place-items: center;
   margin: 10px auto 0;
-  width: min(76vw, 390px);
+  width: min(86vw, 620px);
 }
 .learning-wheel {
-  --wheel-radius: min(24vw, 112px);
+  --wheel-radius: min(29vw, 205px);
   --counter-rotation: 0deg;
   position: relative;
   width: 100%;
@@ -310,9 +312,9 @@ textarea {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 118px;
+  width: 150px;
   color: white;
-  font-size: 0.76rem;
+  font-size: 0.9rem;
   line-height: 1.1;
   font-weight: 900;
   text-align: center;
@@ -322,8 +324,8 @@ textarea {
     rotate(var(--counter-rotation));
 }
 .learning-wheel.dense .wheel-option {
-  width: 94px;
-  font-size: 0.64rem;
+  width: 125px;
+  font-size: 0.78rem;
 }
 .wheel-empty {
   position: absolute;
@@ -443,43 +445,28 @@ dialog label {
   place-items: center;
   margin: 35px 0 15px;
 }
+.outing-wheel-frame {
+  position: relative;
+  width: min(88vw, 620px);
+}
 .wheel {
-  width: min(72vw, 340px);
+  --wheel-radius: min(31vw, 205px);
+  --counter-rotation: 0deg;
+  position: relative;
+  width: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
   border: 12px solid white;
   box-shadow: var(--shadow);
-  background: conic-gradient(
-    #176b5b 0 45deg,
-    #e7b84b 45deg 90deg,
-    #e16b55 90deg 135deg,
-    #8ab7a9 135deg 180deg,
-    #263d5b 180deg 225deg,
-    #e7b84b 225deg 270deg,
-    #e16b55 270deg 315deg,
-    #8ab7a9 315deg
-  );
-  transition: transform 2.2s cubic-bezier(0.15, 0.7, 0.1, 1);
+  overflow: hidden;
+  transition: transform 7.8s cubic-bezier(0.06, 0.58, 0.04, 1);
 }
-.wheel.spinning {
-  transform: rotate(1440deg);
-}
-#wheelLabel {
-  display: grid;
-  place-items: center;
-  text-align: center;
-  width: 52%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: white;
-  padding: 12px;
-  font-weight: 900;
-  box-shadow: 0 3px 15px #0002;
+.wheel.dense .wheel-option {
+  width: 125px;
+  font-size: 0.78rem;
 }
 .spin {
-  margin-top: -23px;
+  margin-top: 8px;
   z-index: 2;
 }
 .outing-list {
@@ -747,7 +734,12 @@ textarea {
     grid-template-columns: 1fr 1fr;
   }
   .learning-dialog {
-    padding: 16px;
+    width: 100vw;
+    max-width: none;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 14px;
+    border-radius: 0;
   }
   .learning-launch {
     grid-template-columns: 58px 1fr;
@@ -762,7 +754,12 @@ textarea {
     gap: 2px;
   }
   .wheel-option {
-    width: 78px;
-    font-size: 0.66rem;
+    width: 92px;
+    font-size: 0.7rem;
+  }
+  .learning-wheel.dense .wheel-option,
+  .wheel.dense .wheel-option {
+    width: 82px;
+    font-size: 0.62rem;
   }
 }
