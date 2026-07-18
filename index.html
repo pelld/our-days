@@ -1,70 +1,205 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#176b5b">
-  <title>Our Days</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="firebase.css">
-</head>
-<body>
-  <header class="topbar">
-    <div><p class="eyebrow">THE PELL FAMILY</p><h1>Our Days</h1><p id="seasonLabel">Summer 2026</p></div>
-    <div class="header-actions"><button class="icon-button" id="settingsButton" aria-label="Open manage page">⚙</button><button class="icon-button" id="signOutButton" aria-label="Sign out">↪</button></div>
-  </header>
-
-  <main>
-    <section id="today" class="page active">
-      <div class="section-heading"><div><p class="eyebrow">TODAY</p><h2 id="todayDate"></h2></div><select id="personSelect" aria-label="Choose person"></select></div>
-      <article class="plan-card"><div><span class="status-dot"></span><strong>Today’s plan</strong></div><p id="planText">Morning jobs, something useful, then see where the day takes us.</p><button class="text-button" id="changePlan">Change plan</button></article>
-      <div id="taskGroups"></div>
-      <button class="primary wide" id="quickMemory">＋ Add a memory</button>
-    </section>
-
-    <section id="explore" class="page">
-      <div class="section-heading"><div><p class="eyebrow">GO SOMEWHERE</p><h2>What shall we do?</h2></div></div>
-      <div class="filters">
-        <label>Location<select id="locationFilter"><option value="england">England</option><option value="france">Dieppe</option></select></label>
-        <label>Weather<select id="weatherFilter"><option value="either">Any</option><option value="dry">Dry</option><option value="wet">Rainy</option></select></label>
-        <label>Time<select id="timeFilter"><option value="any">Any</option><option value="short">Up to 3 hours</option><option value="half">Half-day</option><option value="full">Full day</option></select></label>
-        <label>Budget<select id="costFilter"><option value="any">Any</option><option value="free">Free</option><option value="paid">Paid</option></select></label>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#176b5b" />
+    <title>Our Days</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="firebase.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">THE PELL FAMILY</p>
+        <h1>Our Days</h1>
+        <p id="seasonLabel">Summer 2026</p>
       </div>
-      <div class="wheel-wrap"><div id="wheel" class="wheel"><div id="wheelLabel">Ready?</div></div><button id="spinButton" class="primary spin">Spin the wheel</button></div>
-      <div class="section-heading compact"><h3>All options</h3><span id="eligibleCount"></span></div>
-      <div id="outingList" class="outing-list"></div>
-    </section>
+      <div class="header-actions">
+        <button
+          class="icon-button"
+          id="settingsButton"
+          aria-label="Open manage page"
+        >
+          ⚙</button
+        ><button class="icon-button" id="signOutButton" aria-label="Sign out">
+          ↪
+        </button>
+      </div>
+    </header>
 
-    <section id="progress" class="page">
-      <div class="section-heading"><div><p class="eyebrow">PROGRESS</p><h2>Everyone’s doing their own thing</h2></div></div>
-      <div id="progressCards" class="progress-grid"></div>
-    </section>
+    <main>
+      <section id="today" class="page active">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">TODAY</p>
+            <h2 id="todayDate"></h2>
+          </div>
+          <select id="personSelect" aria-label="Choose person"></select>
+        </div>
+        <article class="plan-card">
+          <div>
+            <span class="status-dot"></span><strong>Today’s plan</strong>
+          </div>
+          <p id="planText">
+            Morning jobs, something useful, then see where the day takes us.
+          </p>
+          <button class="text-button" id="changePlan">Change plan</button>
+        </article>
+        <div id="taskGroups"></div>
+        <button class="primary wide" id="quickMemory">＋ Add a memory</button>
+      </section>
 
-    <section id="memories" class="page">
-      <div class="section-heading"><div><p class="eyebrow">SCRAPBOOK</p><h2>Summer 2026</h2></div><button class="primary" id="addMemory">＋ Add</button></div>
-      <div id="memoryList" class="memory-grid"></div>
-    </section>
+      <section id="explore" class="page">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">GO SOMEWHERE</p>
+            <h2>What shall we do?</h2>
+          </div>
+        </div>
+        <div class="filters">
+          <label
+            >Location<select id="locationFilter">
+              <option value="england">England</option>
+              <option value="france">Dieppe</option>
+            </select></label
+          >
+          <label
+            >Weather<select id="weatherFilter">
+              <option value="either">Any</option>
+              <option value="dry">Dry</option>
+              <option value="wet">Rainy</option>
+            </select></label
+          >
+          <label
+            >Time<select id="timeFilter">
+              <option value="any">Any</option>
+              <option value="short">Up to 3 hours</option>
+              <option value="half">Half-day</option>
+              <option value="full">Full day</option>
+            </select></label
+          >
+          <label
+            >Budget<select id="costFilter">
+              <option value="any">Any</option>
+              <option value="free">Free</option>
+              <option value="paid">Paid</option>
+            </select></label
+          >
+        </div>
+        <div class="wheel-wrap">
+          <div id="wheel" class="wheel"><div id="wheelLabel">Ready?</div></div>
+          <button id="spinButton" class="primary spin">Spin the wheel</button>
+        </div>
+        <div class="section-heading compact">
+          <h3>All options</h3>
+          <span id="eligibleCount"></span>
+        </div>
+        <div id="outingList" class="outing-list"></div>
+      </section>
 
-    <section id="manage" class="page">
-      <div class="section-heading"><div><p class="eyebrow">ADULTS</p><h2>Manage</h2></div></div>
-      <p class="muted">Changes are saved on this device in the prototype. Firebase will make them shared.</p>
-      <div class="manage-tabs"><button class="chip active" data-manage="tasks">Tasks</button><button class="chip" data-manage="outings">Outings</button></div>
-      <div id="manageTable"></div>
-      <button class="primary" id="addRow">＋ Add item</button>
-      <button class="secondary" id="resetData">Reset prototype data</button>
-    </section>
-  </main>
+      <section id="progress" class="page">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PROGRESS</p>
+            <h2>Everyone’s doing their own thing</h2>
+          </div>
+        </div>
+        <div id="progressCards" class="progress-grid"></div>
+      </section>
 
-  <nav class="bottom-nav">
-    <button class="active" data-page="today"><span>✓</span>Today</button>
-    <button data-page="explore"><span>◎</span>Explore</button>
-    <button data-page="progress"><span>↗</span>Progress</button>
-    <button data-page="memories"><span>▣</span>Memories</button>
-  </nav>
+      <section id="memories" class="page">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">SCRAPBOOK</p>
+            <h2>Summer 2026</h2>
+          </div>
+          <button class="primary" id="addMemory">＋ Add</button>
+        </div>
+        <div id="memoryList" class="memory-grid"></div>
+      </section>
 
-  <dialog id="planDialog"><form method="dialog"><h3>Change today’s plan</h3><label>Current plan<textarea id="planInput" rows="4"></textarea></label><div class="dialog-actions"><button value="cancel" class="secondary">Cancel</button><button value="save" class="primary" id="savePlan">Save plan</button></div></form></dialog>
-  <dialog id="memoryDialog"><form id="memoryForm"><h3>Add a memory</h3><label>Title<input id="memoryTitle" required></label><label>What happened?<textarea id="memoryText" rows="4"></textarea></label><label>Photo<input id="memoryPhoto" type="file" accept="image/*"></label><p class="muted small">Photos are reduced to a sensible scrapbook size before secure upload.</p><div class="dialog-actions"><button type="button" class="secondary" id="cancelMemory">Cancel</button><button type="submit" class="primary" id="saveMemory">Add memory</button></div></form></dialog>
-  <div id="loginScreen" class="login-screen"><form id="loginForm" class="login-card"><p class="eyebrow">THE PELL FAMILY</p><h1>Our Days</h1><p>Sign in to your private family planner and scrapbook.</p><label>Email<input id="loginEmail" type="email" autocomplete="username" required></label><label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label><p id="loginError" class="error"></p><button class="primary wide">Sign in</button></form></div>
-  <script type="module" src="firebase-app.js"></script>
-</body>
+      <section id="manage" class="page">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ADULTS</p>
+            <h2>Manage</h2>
+          </div>
+        </div>
+        <p class="muted">
+          Changes save automatically and are shared across your signed-in
+          devices.
+        </p>
+        <div class="manage-tabs">
+          <button class="chip active" data-manage="tasks">Tasks</button
+          ><button class="chip" data-manage="outings">Outings</button>
+        </div>
+        <div id="manageTable"></div>
+        <button class="primary" id="addRow">＋ Add item</button>
+        <button class="secondary" id="resetData">Reset prototype data</button>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="active" data-page="today"><span>✓</span>Today</button>
+      <button data-page="explore"><span>◎</span>Explore</button>
+      <button data-page="progress"><span>↗</span>Progress</button>
+      <button data-page="memories"><span>▣</span>Memories</button>
+    </nav>
+
+    <dialog id="planDialog">
+      <form method="dialog">
+        <h3>Change today’s plan</h3>
+        <label>Current plan<textarea id="planInput" rows="4"></textarea></label>
+        <div class="dialog-actions">
+          <button value="cancel" class="secondary">Cancel</button
+          ><button value="save" class="primary" id="savePlan">Save plan</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="memoryDialog">
+      <form id="memoryForm">
+        <h3>Add a memory</h3>
+        <label>Title<input id="memoryTitle" required /></label
+        ><label
+          >What happened?<textarea id="memoryText" rows="4"></textarea></label
+        ><label
+          >Photo<input id="memoryPhoto" type="file" accept="image/*"
+        /></label>
+        <p class="muted small">
+          Photos are reduced to a sensible scrapbook size before secure upload.
+        </p>
+        <div class="dialog-actions">
+          <button type="button" class="secondary" id="cancelMemory">
+            Cancel</button
+          ><button type="submit" class="primary" id="saveMemory">
+            Add memory
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <div id="loginScreen" class="login-screen">
+      <form id="loginForm" class="login-card">
+        <p class="eyebrow">THE PELL FAMILY</p>
+        <h1>Our Days</h1>
+        <p>Sign in to your private family planner and scrapbook.</p>
+        <label
+          >Email<input
+            id="loginEmail"
+            type="email"
+            autocomplete="username"
+            required /></label
+        ><label
+          >Password<input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+        /></label>
+        <p id="loginError" class="error"></p>
+        <button class="primary wide">Sign in</button>
+      </form>
+    </div>
+    <script type="module" src="firebase-app.js"></script>
+  </body>
 </html>
