@@ -271,6 +271,33 @@
         </div>
       </form>
     </dialog>
+    <dialog id="quickTaskDialog">
+      <form id="quickTaskForm">
+        <h3>Add a task for today</h3>
+        <label>Task<input id="quickTaskName" required maxlength="120" /></label>
+        <div class="form-row">
+          <label
+            >Time<select id="quickTaskMinutes">
+              <option value="5">5 minutes</option>
+              <option value="10" selected>10 minutes</option>
+              <option value="20">20 minutes</option>
+              <option value="30">30 minutes</option>
+              <option value="45">45 minutes</option>
+              <option value="60">60 minutes</option>
+            </select></label
+          >
+          <label
+            >Points<input id="quickTaskPoints" type="number" min="0" max="100" value="5"
+          /></label>
+        </div>
+        <div class="dialog-actions">
+          <button type="button" class="secondary" data-close="quickTaskDialog">
+            Cancel
+          </button>
+          <button class="primary">Add task</button>
+        </div>
+      </form>
+    </dialog>
     <dialog id="memoryDialog">
       <form id="memoryForm">
         <h3>Add a memory</h3>

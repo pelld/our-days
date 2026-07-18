@@ -358,6 +358,50 @@ const seed = {
     lydia: "PhD progress if useful; everything else is optional.",
   },
 };
+const outingExpansion = [
+  ["grandma", "Visit Grandma", "england", "either", "half", "free", "often"],
+  ["food-shop", "Food shopping together", "england", "either", "short", "paid", "often"],
+  ["soft-play", "Soft play", "england", "wet", "half", "paid", "occasional"],
+  ["fell-walk", "Walk up the fell", "england", "dry", "half", "free", "often"],
+  ["tyne-green", "Tyne Green Country Park", "england", "dry", "short", "free", "often"],
+  ["sele-park", "The Sele park and playground", "england", "dry", "short", "free", "often"],
+  ["bolam-lake", "Bolam Lake Country Park", "england", "dry", "half", "free", "occasional"],
+  ["plessey-woods", "Plessey Woods Country Park", "england", "dry", "half", "free", "occasional"],
+  ["wallington", "Wallington house and grounds", "england", "either", "full", "paid", "once"],
+  ["cragside", "Cragside", "england", "either", "full", "paid", "once"],
+  ["woodhorn", "Woodhorn Museum", "england", "wet", "full", "paid", "once"],
+  ["discovery", "Discovery Museum", "england", "wet", "half", "free", "once"],
+  ["life-centre", "Life Science Centre", "england", "wet", "full", "paid", "once"],
+  ["beamish", "Beamish Museum", "england", "either", "full", "paid", "once"],
+  ["bowes", "The Bowes Museum", "england", "wet", "full", "paid", "once"],
+  ["locomotion", "Locomotion at Shildon", "england", "wet", "full", "free", "once"],
+  ["hall-hill", "Hall Hill Farm", "england", "either", "full", "paid", "once"],
+  ["adventure-valley", "Adventure Valley", "england", "either", "full", "paid", "once"],
+  ["library", "Library visit", "england", "wet", "short", "free", "often"],
+  ["garden-centre", "Garden centre and café", "england", "either", "short", "paid", "often"],
+  ["picnic", "Picnic and playground", "england", "dry", "half", "free", "often"],
+  ["train-ride", "Take a train somewhere", "england", "either", "half", "paid", "occasional"],
+  ["dieppe-market", "Dieppe market", "france", "dry", "half", "paid", "often"],
+  ["pourville", "Pourville beach", "france", "dry", "half", "free", "occasional"],
+  ["veules", "Veules-les-Roses", "france", "dry", "full", "free", "once"],
+  ["arques", "Arques-la-Bataille walk", "france", "dry", "half", "free", "occasional"],
+  ["varengeville", "Varengeville gardens and church", "france", "dry", "half", "paid", "once"],
+  ["rouen", "Day trip to Rouen", "france", "either", "full", "paid", "once"],
+  ["french-shop", "French food shop challenge", "france", "either", "short", "paid", "often"],
+  ["french-park", "Find a new French playground", "france", "dry", "short", "free", "often"],
+  ["french-picnic", "Buy and make a French picnic", "france", "dry", "half", "paid", "often"],
+  ["mini-golf-d", "Mini golf", "france", "dry", "half", "paid", "occasional"],
+].map(([id, name, location, weather, time, cost, repeat]) => ({
+  id,
+  name,
+  location,
+  weather,
+  time,
+  cost,
+  repeat,
+  active: true,
+}));
+seed.outings.push(...outingExpansion);
 const learningSeed = [];
 const addLearning = (area, subject, activities) =>
   activities.forEach(
@@ -1032,6 +1076,48 @@ addLearning("Practical and creative", "Making", [
   ["Create a reflection page about something learned", 10],
 ]);
 const twinklInspiredSeed = learningSeed.slice(twinklIdeasStart);
+const libraryFiveStart = learningSeed.length;
+addLearning("English", "Words and performance", [
+  ["Make a mini comic strip", 20],
+  ["Perform a poem with expression", 10],
+  ["Invent five silly similes", 10],
+  ["Write instructions for a ridiculous machine", 20],
+  ["Play a word-category race", 10, "indoors", "together", "active"],
+]);
+addLearning("Maths", "Puzzles and games", [
+  ["Solve a number-code puzzle", 10],
+  ["Make a maths treasure hunt", 20, "either", "together", "active"],
+  ["Play a dice calculation game", 10, "indoors", "together"],
+  ["Estimate then measure ten objects", 20, "either", "independent", "active"],
+  ["Build the tallest paper tower", 20, "indoors", "together", "messy"],
+]);
+addLearning("Science", "Forces and machines", [
+  ["Make a ramp and test toy vehicles", 20, "either", "together", "active"],
+  ["Build a simple lever", 20, "either", "together", "messy"],
+  ["Test which paper aeroplane flies furthest", 20, "either", "together", "active"],
+  ["Make a parachute for a toy", 20, "either", "together", "messy"],
+  ["Find five pushes and pulls", 10, "either", "independent", "active"],
+]);
+addLearning("Nature and outdoors", "Outdoor missions", [
+  ["Complete a colour scavenger hunt", 20, "outdoors", "either", "active"],
+  ["Make a tiny nature museum", 20, "outdoors", "independent", "active"],
+  ["Follow a map to a chosen point", 20, "outdoors", "together", "active"],
+  ["Measure a tree without climbing it", 20, "outdoors", "together", "active"],
+  ["Find evidence of five living things", 20, "outdoors", "either", "active"],
+]);
+addPersonal("amelia", "GCSE focus", "Exam technique", ["Improve one answer using a mark scheme", "Plan a six-mark answer", "Make a one-page topic checklist", "Explain a hard idea without notes", "Create five likely exam questions"]);
+addPersonal("amelia", "Life beyond screens", "Make and explore", ["Try a new craft technique", "Photograph a small local story", "Make or alter something to wear", "Cook something from another country", "Visit a library or bookshop"], 30);
+addPersonal("amelia", "Music and culture", "Listen and respond", ["Make a five-song themed playlist", "Watch a film you have meant to see", "Learn the story behind a favourite song", "Try a Spanish-language programme", "Review a book, film or album"], 20);
+addPersonal("amelia", "Friends and future", "Connect and plan", ["Arrange something with a friend", "Research one possible post-16 route", "Make a realistic August wish list", "Plan a screen-free afternoon", "Do one useful favour without being asked"], 20);
+addPersonal("david", "Local exploration", "Go and notice", ["Walk a footpath you have not used", "Drive a road you have not taken", "Visit a small local museum", "Find a new café or shop", "Photograph an overlooked local detail"], 30, "active");
+addPersonal("david", "Words and ideas", "Read and write", ["Practise four troublesome spellings", "Read a chapter of something", "Write a short family memory", "Learn five new French words", "Investigate a question you keep wondering about"]);
+addPersonal("david", "Practical projects", "Make and mend", ["Fix one small annoying thing", "Clean and check the car", "Propagate a plant", "Try resin, clay or salt dough", "Complete one stage of an outdoor job"], 30, "active");
+addPersonal("david", "Movement", "Choose a challenge", ["Go for a run", "Cycle somewhere useful", "Do a short strength session", "Walk up the fell", "Try a new route on foot"], 30, "active");
+addPersonal("lydia", "Pleasure and culture", "Choose for yourself", ["Read somewhere pleasant", "Visit a café or bookshop", "Watch something properly without multitasking", "Listen to a whole album", "Try a new recipe or food"]);
+addPersonal("lydia", "Movement", "Gentle options", ["Take a twenty-minute walk", "Do an extra yoga session", "Walk somewhere with a purpose", "Stretch outside", "Choose a step-count mini goal"], 20, "active");
+addPersonal("lydia", "People and memories", "Connect", ["Phone or message someone", "Plan a relaxed family thing", "Add a scrapbook memory", "Choose photographs to keep", "Visit someone or invite them over"]);
+addPersonal("lydia", "Home and garden", "Small satisfactions", ["Clear one visible surface", "Tend one neglected patch", "Pick or arrange flowers", "Make one corner more comfortable", "Finish a ten-minute household job"]);
+const libraryFiveSeed = learningSeed.slice(libraryFiveStart);
 const adultLearningSeed = learningSeed.slice(
   adultLibraryStart,
   expandedHunterStart,
@@ -1053,7 +1139,7 @@ for (let i = 0; i < learningSeed.length; i++)
   learningSeed[i] = expandedArea(learningSeed[i]);
 
 seed.learningActivities = learningSeed;
-seed.wheelLibraryVersion = 4;
+seed.wheelLibraryVersion = 5;
 seed.wheelHistory = {};
 
 let data = structuredClone(seed),
@@ -1074,7 +1160,7 @@ async function save() {
 async function startData() {
   const snap = await getDoc(stateRef);
   if (!snap.exists()) await setDoc(stateRef, seed);
-  else if ((snap.data().wheelLibraryVersion || 0) < 4) {
+  else if ((snap.data().wheelLibraryVersion || 0) < 5) {
     const version = snap.data().wheelLibraryVersion || 0;
     let activities = (snap.data().learningActivities || []).map((item) => ({
       ...item,
@@ -1083,14 +1169,27 @@ async function startData() {
     if (version < 2) activities.push(...adultLearningSeed);
     if (version < 3) activities.push(...expandedHunterSeed);
     if (version < 4) activities.push(...twinklInspiredSeed);
+    if (version < 5) activities.push(...libraryFiveSeed);
     activities = activities.map(expandedArea);
+    const existingOutings = snap.data().outings || [];
+    const outingIds = new Set(existingOutings.map((item) => item.id));
+    const selections = (snap.data().learningSelections || []).map(
+      (item, index) => ({
+        ...item,
+        id: item.id || `legacy-${item.person}-${item.date}-${index}`,
+      }),
+    );
     await setDoc(
       stateRef,
       {
         learningActivities: activities,
-        learningSelections: snap.data().learningSelections || [],
+        learningSelections: selections,
+        outings: [
+          ...existingOutings,
+          ...outingExpansion.filter((item) => !outingIds.has(item.id)),
+        ],
         wheelHistory: snap.data().wheelHistory || {},
-        wheelLibraryVersion: 4,
+        wheelLibraryVersion: 5,
       },
       { merge: true },
     );
@@ -1143,6 +1242,9 @@ function bind() {
     $("#memoryDialog").showModal();
   $("#cancelMemory").onclick = () => $("#memoryDialog").close();
   $("#memoryForm").onsubmit = addMemory;
+  $("#quickTaskForm").onsubmit = addQuickTask;
+  $('[data-close="quickTaskDialog"]').onclick = () =>
+    $("#quickTaskDialog").close();
   $("#choiceForm").onsubmit = saveTaskChoice;
   $("#cancelChoice").onclick = () => {
     pendingTaskId = null;
@@ -1302,29 +1404,57 @@ const wheelProfiles = {
   },
 };
 function todayLearningSelection() {
-  return (data.learningSelections || []).find(
+  return (data.learningSelections || []).filter(
     (item) => item.person === currentPerson && item.date === todayKey(),
+  );
+}
+function selectionId(item, index = 0) {
+  return (
+    item.id ||
+    `legacy-${item.person}-${item.date}-${item.activityId || "custom"}-${index}`
   );
 }
 function renderLearningToday() {
   const host = $("#learningToday"),
     profile = wheelProfiles[currentPerson],
-    selection = todayLearningSelection(),
-    activity =
-      selection &&
-      data.learningActivities.find((item) => item.id === selection.activityId),
-    taskId = `wheel-${currentPerson}-${todayKey()}`,
-    done = completed(taskId);
-  host.innerHTML = `<section class="task-section learning-today"><div class="learning-title"><h3>${profile.title}</h3><button class="text-link" id="chooseLearning">${activity ? "Choose again" : profile.button}</button></div>${activity ? `<label class="task ${done ? "done" : ""}"><input type="checkbox" id="learningComplete" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(activity.name)}</span><small>${esc(activity.area)} · ${esc(activity.subject)} · ${activity.minutes} minutes</small></span><span class="points">+5</span></label>` : `<button class="learning-launch" id="learningLaunch"><span class="mini-wheel" aria-hidden="true"></span><span class="launch-copy"><strong>${profile.button}</strong><span>${profile.tagline}</span></span></button>`}</section>`;
+    selections = todayLearningSelection();
+  const cards = selections
+    .map((selection, index) => {
+      const activity = data.learningActivities.find(
+          (item) => item.id === selection.activityId,
+        ),
+        chosen = activity || {
+          name: selection.customName || "Added task",
+          area: "Added task",
+          subject: "Today",
+          minutes: selection.minutes || 10,
+        },
+        id = selectionId(selection, index),
+        taskId = `wheel-${id}`,
+        done = completed(taskId),
+        points = selection.points ?? 5;
+      return `<label class="task ${done ? "done" : ""}"><input type="checkbox" data-learning-complete="${esc(id)}" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(chosen.name)}</span><small>${esc(chosen.area)} · ${esc(chosen.subject)} · ${chosen.minutes} minutes</small></span>${points ? `<span class="points">+${points}</span>` : ""}</label>`;
+    })
+    .join("");
+  host.innerHTML = `<section class="task-section learning-today"><div class="learning-title"><h3>${profile.title}</h3><div class="learning-title-actions"><button class="text-link" id="chooseLearning">${selections.length ? "Spin again" : profile.button}</button><button class="text-link" id="addQuickTask">＋ Add task</button></div></div>${selections.length ? `<div class="learning-task-list">${cards}</div>` : `<button class="learning-launch" id="learningLaunch"><span class="mini-wheel" aria-hidden="true"></span><span class="launch-copy"><strong>${profile.button}</strong><span>${profile.tagline}</span></span></button>`}</section>`;
   const open = () => openLearningWheel();
   $("#chooseLearning").onclick = open;
+  $("#addQuickTask").onclick = openQuickTask;
   if ($("#learningLaunch")) $("#learningLaunch").onclick = open;
-  if ($("#learningComplete"))
-    $("#learningComplete").onchange = (event) =>
-      toggleLearningComplete(event.target.checked);
+  $$('[data-learning-complete]').forEach(
+    (box) =>
+      (box.onchange = (event) =>
+        toggleLearningComplete(
+          event.target.dataset.learningComplete,
+          event.target.checked,
+        )),
+  );
 }
-function toggleLearningComplete(on) {
-  const taskId = `wheel-${currentPerson}-${todayKey()}`;
+function toggleLearningComplete(id, on) {
+  const selection = todayLearningSelection().find(
+      (item, index) => selectionId(item, index) === id,
+    ),
+    taskId = `wheel-${id}`;
   data.completions = data.completions.filter(
     (item) => !(item.taskId === taskId && item.date === todayKey()),
   );
@@ -1333,10 +1463,33 @@ function toggleLearningComplete(on) {
       taskId,
       person: currentPerson,
       date: todayKey(),
-      points: 5,
-      choice: todayLearningSelection()?.activityId || "",
+      points: selection?.points ?? 5,
+      choice: selection?.activityId || selection?.customName || "",
     });
   save();
+}
+function openQuickTask() {
+  $("#quickTaskForm").reset();
+  $("#quickTaskPoints").value = 5;
+  $("#quickTaskMinutes").value = 10;
+  $("#quickTaskDialog").showModal();
+  $("#quickTaskName").focus();
+}
+function addQuickTask(event) {
+  event.preventDefault();
+  const name = $("#quickTaskName").value.trim();
+  if (!name) return;
+  data.learningSelections ||= [];
+  data.learningSelections.push({
+    id: crypto.randomUUID(),
+    person: currentPerson,
+    date: todayKey(),
+    customName: name,
+    minutes: +$("#quickTaskMinutes").value,
+    points: +$("#quickTaskPoints").value || 0,
+  });
+  save();
+  $("#quickTaskDialog").close();
 }
 function openLearningWheel() {
   learningPath = [];
@@ -1631,21 +1784,14 @@ function selectLearningActivity() {
         item.name === name,
     );
   if (!activity) return;
-  data.learningSelections = (data.learningSelections || []).filter(
-    (item) => !(item.person === currentPerson && item.date === todayKey()),
-  );
+  data.learningSelections ||= [];
   data.learningSelections.push({
+    id: crypto.randomUUID(),
     person: currentPerson,
     date: todayKey(),
     activityId: activity.id,
+    points: 5,
   });
-  data.completions = data.completions.filter(
-    (item) =>
-      !(
-        item.taskId === `wheel-${currentPerson}-${todayKey()}` &&
-        item.date === todayKey()
-      ),
-  );
   save();
   $("#learningDialog").close();
 }
@@ -1703,9 +1849,14 @@ function renderOutings() {
     colours = wheelColours(options.map((item) => item.name)),
     size = displayOptions.length ? 360 / displayOptions.length : 360;
   wheel.classList.toggle("dense", displayOptions.length >= 7);
+  wheel.classList.toggle("very-dense", displayOptions.length >= 15);
   wheel.style.setProperty(
     "--wheel-radius",
-    displayOptions.length >= 7 ? "min(31vw, 205px)" : "min(27vw, 180px)",
+    displayOptions.length >= 15
+      ? "min(34vw, 235px)"
+      : displayOptions.length >= 7
+        ? "min(31vw, 205px)"
+        : "min(27vw, 180px)",
   );
   wheel.style.setProperty("--counter-rotation", "0deg");
   wheel.style.transition = "none";
