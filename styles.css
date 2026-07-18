@@ -13,6 +13,9 @@
 * {
   box-sizing: border-box;
 }
+[hidden] {
+  display: none !important;
+}
 body {
   margin: 0;
   background: var(--paper);
@@ -23,7 +26,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px max(20px, calc((100vw - 1060px) / 2));
+  padding: 22px max(20px, calc((100vw - 1380px) / 2));
   background: var(--green);
   color: white;
 }
@@ -52,7 +55,7 @@ body {
   font-size: 1.2rem;
 }
 main {
-  max-width: 1060px;
+  max-width: 1380px;
   margin: auto;
   padding: 28px 20px 110px;
 }
@@ -222,6 +225,9 @@ textarea {
   max-height: 96vh;
   overflow: auto;
 }
+.learning-dialog form {
+  display: block;
+}
 .learning-head {
   display: flex;
   align-items: flex-start;
@@ -235,6 +241,37 @@ textarea {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
+}
+.learning-filter-panel {
+  margin: 6px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f7f8f5;
+}
+.learning-filter-panel summary {
+  padding: 7px 11px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.learning-filter-panel .learning-filters {
+  padding: 0 10px 10px;
+}
+.learning-workspace {
+  display: grid;
+  grid-template-columns: minmax(470px, 600px) minmax(300px, 1fr);
+  gap: 22px;
+  align-items: center;
+}
+.wheel-column {
+  min-width: 0;
+}
+.wheel-side {
+  display: grid;
+  gap: 12px;
+  align-content: center;
+  min-width: 0;
 }
 .learning-filters label {
   display: grid;
@@ -284,7 +321,22 @@ textarea {
   display: grid;
   place-items: center;
   margin: 10px auto 0;
-  width: min(86vw, 620px);
+  width: min(72vh, 600px);
+}
+.learning-wheel {
+  cursor: pointer;
+}
+.learning-wheel:focus-visible,
+.wheel:focus-visible {
+  outline: 4px solid var(--gold);
+  outline-offset: 4px;
+}
+.wheel-hint {
+  margin: 2px 0 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 .learning-wheel {
   --wheel-radius: min(29vw, 205px);
@@ -394,9 +446,22 @@ textarea {
     opacity: 0;
   }
 }
+@media (max-width: 900px) {
+  .learning-workspace {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .learning-wheel-wrap {
+    width: min(68vh, 92vw, 560px);
+  }
+  .wheel-side {
+    gap: 8px;
+  }
+}
 .learning-actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .points {
@@ -459,6 +524,7 @@ dialog label {
   border: 12px solid white;
   box-shadow: var(--shadow);
   overflow: hidden;
+  cursor: pointer;
   transition: transform 7.8s cubic-bezier(0.06, 0.58, 0.04, 1);
 }
 .wheel.dense .wheel-option {
@@ -740,6 +806,19 @@ textarea {
     margin: 0;
     padding: 14px;
     border-radius: 0;
+  }
+  .learning-workspace {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .learning-wheel-wrap {
+    width: min(94vw, 430px);
+  }
+  .wheel-hint {
+    margin-bottom: 4px;
+  }
+  .wheel-side {
+    gap: 8px;
   }
   .learning-launch {
     grid-template-columns: 58px 1fr;

@@ -58,36 +58,39 @@
             <h2>What shall we do?</h2>
           </div>
         </div>
-        <div class="filters">
-          <label
-            >Location<select id="locationFilter">
-              <option value="england">England</option>
-              <option value="france">Dieppe</option>
-            </select></label
-          >
-          <label
-            >Weather<select id="weatherFilter">
-              <option value="either">Any</option>
-              <option value="dry">Dry</option>
-              <option value="wet">Rainy</option>
-            </select></label
-          >
-          <label
-            >Time<select id="timeFilter">
-              <option value="any">Any</option>
-              <option value="short">Up to 3 hours</option>
-              <option value="half">Half-day</option>
-              <option value="full">Full day</option>
-            </select></label
-          >
-          <label
-            >Budget<select id="costFilter">
-              <option value="any">Any</option>
-              <option value="free">Free</option>
-              <option value="paid">Paid</option>
-            </select></label
-          >
-        </div>
+        <details class="learning-filter-panel outing-filter-panel">
+          <summary>Choose conditions (optional)</summary>
+          <div class="filters">
+            <label
+              >Location<select id="locationFilter">
+                <option value="england">England</option>
+                <option value="france">Dieppe</option>
+              </select></label
+            >
+            <label
+              >Weather<select id="weatherFilter">
+                <option value="either">Any</option>
+                <option value="dry">Dry</option>
+                <option value="wet">Rainy</option>
+              </select></label
+            >
+            <label
+              >Time<select id="timeFilter">
+                <option value="any">Any</option>
+                <option value="short">Up to 3 hours</option>
+                <option value="half">Half-day</option>
+                <option value="full">Full day</option>
+              </select></label
+            >
+            <label
+              >Budget<select id="costFilter">
+                <option value="any">Any</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
+              </select></label
+            >
+          </div>
+        </details>
         <div class="wheel-wrap">
           <div class="outing-wheel-frame">
             <div class="wheel-pointer"></div>
@@ -192,56 +195,79 @@
             <span>3</span><strong>Activity</strong>
           </div>
         </div>
-        <div id="learningFilters" class="learning-filters">
-          <label
-            >Time<select id="learnTime">
-              <option value="any">Any</option>
-              <option value="5">5 minutes</option>
-              <option value="10">10 minutes</option>
-              <option value="20">20 minutes</option>
-            </select></label
-          >
-          <label
-            >Place<select id="learnPlace">
-              <option value="any">Anywhere</option>
-              <option value="indoors">Indoors</option>
-              <option value="outdoors">Outdoors</option>
-            </select></label
-          >
-          <label
-            >Help<select id="learnSupport">
-              <option value="any">Either</option>
-              <option value="independent">Independent</option>
-              <option value="together">With someone</option>
-            </select></label
-          >
-          <label
-            >Style<select id="learnEnergy">
-              <option value="any">Any</option>
-              <option value="calm">Calm</option>
-              <option value="active">Active</option>
-              <option value="messy">Messy</option>
-            </select></label
-          >
-        </div>
-        <div class="learning-wheel-wrap">
-          <div class="wheel-pointer"></div>
-          <div id="learningWheel" class="learning-wheel"></div>
-        </div>
-        <div id="learningResult" class="learning-result" hidden></div>
-        <div id="activityDetail" class="activity-detail" hidden></div>
-        <p id="learningBreadcrumb" class="learning-breadcrumb"></p>
-        <div class="learning-actions">
-          <button type="button" class="secondary" id="learningBack">
-            Back
-          </button>
-          <button type="button" class="secondary" id="learningRestart">
-            Start again
-          </button>
-          <button type="button" class="secondary" id="learningRespin" hidden>
-            Spin this level again
-          </button>
-          <button type="button" class="primary" id="learningSpin">Spin</button>
+        <details id="learningFilterPanel" class="learning-filter-panel">
+          <summary>Optional filters</summary>
+          <div id="learningFilters" class="learning-filters">
+            <label
+              >Time<select id="learnTime">
+                <option value="any">Any</option>
+                <option value="5">5 minutes</option>
+                <option value="10">10 minutes</option>
+                <option value="20">20 minutes</option>
+              </select></label
+            >
+            <label
+              >Place<select id="learnPlace">
+                <option value="any">Anywhere</option>
+                <option value="indoors">Indoors</option>
+                <option value="outdoors">Outdoors</option>
+              </select></label
+            >
+            <label
+              >Help<select id="learnSupport">
+                <option value="any">Either</option>
+                <option value="independent">Independent</option>
+                <option value="together">With someone</option>
+              </select></label
+            >
+            <label
+              >Style<select id="learnEnergy">
+                <option value="any">Any</option>
+                <option value="calm">Calm</option>
+                <option value="active">Active</option>
+                <option value="messy">Messy</option>
+              </select></label
+            >
+          </div>
+        </details>
+        <div class="learning-workspace">
+          <div class="wheel-column">
+            <div class="learning-wheel-wrap">
+              <div class="wheel-pointer"></div>
+              <div
+                id="learningWheel"
+                class="learning-wheel"
+                role="button"
+                tabindex="0"
+                aria-label="Spin the wheel"
+              ></div>
+            </div>
+            <p class="wheel-hint">Click the wheel to spin</p>
+          </div>
+          <div class="wheel-side">
+            <div id="learningResult" class="learning-result" hidden></div>
+            <div id="activityDetail" class="activity-detail" hidden></div>
+            <p id="learningBreadcrumb" class="learning-breadcrumb"></p>
+            <div class="learning-actions">
+              <button type="button" class="secondary" id="learningBack">
+                Back
+              </button>
+              <button type="button" class="secondary" id="learningRestart">
+                Start again
+              </button>
+              <button
+                type="button"
+                class="secondary"
+                id="learningRespin"
+                hidden
+              >
+                Spin this level again
+              </button>
+              <button type="button" class="primary" id="learningSpin">
+                Spin
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </dialog>

@@ -994,6 +994,44 @@ addLearning("Practical and creative", "Technology", [
   ],
 ]);
 const expandedHunterSeed = learningSeed.slice(expandedHunterStart);
+const twinklIdeasStart = learningSeed.length;
+addLearning("English", "Reading", [
+  ["Read a short text and make a film-style review", 20],
+  ["Create five comprehension questions", 10],
+  ["Match a sentence to the best summary", 10],
+]);
+addLearning("English", "Writing", [
+  ["Rewrite sentences from present to past tense", 10],
+  ["Build new words with prefixes and suffixes", 10],
+  ["Write a summer postcard from an imaginary place", 20],
+]);
+addLearning("Maths", "Number", [
+  ["Solve a summer code-breaker", 20],
+  ["Make a colour-by-number calculation puzzle", 20],
+  ["Create a number maze for someone else", 20],
+]);
+addLearning("Maths", "Shape and measure", [
+  ["Run a potions measuring challenge", 20, "indoors", "together", "messy"],
+  ["Make a shape mosaic", 20],
+  ["Design a dot-to-dot using numbered points", 20],
+]);
+addLearning("Science", "Materials and forces", [
+  ["Make and investigate silly putty", 20, "indoors", "together", "messy"],
+  ["Create a tornado in a jar", 20, "indoors", "together", "messy"],
+  ["Make a simple lava lamp", 20, "indoors", "together", "messy"],
+  ["Test materials for a useful purpose", 20, "either", "together", "messy"],
+]);
+addLearning("Science", "Animals", [
+  ["Design a healthy meal for a human", 20],
+  ["Match living things to their habitats", 10],
+  ["Make a food-chain strip", 20],
+]);
+addLearning("Practical and creative", "Making", [
+  ["Make a summer maths mosaic", 20, "indoors", "independent", "messy"],
+  ["Design a floating-boat challenge certificate", 10],
+  ["Create a reflection page about something learned", 10],
+]);
+const twinklInspiredSeed = learningSeed.slice(twinklIdeasStart);
 const adultLearningSeed = learningSeed.slice(
   adultLibraryStart,
   expandedHunterStart,
@@ -1015,7 +1053,7 @@ for (let i = 0; i < learningSeed.length; i++)
   learningSeed[i] = expandedArea(learningSeed[i]);
 
 seed.learningActivities = learningSeed;
-seed.wheelLibraryVersion = 3;
+seed.wheelLibraryVersion = 4;
 seed.wheelHistory = {};
 
 let data = structuredClone(seed),
@@ -1036,7 +1074,7 @@ async function save() {
 async function startData() {
   const snap = await getDoc(stateRef);
   if (!snap.exists()) await setDoc(stateRef, seed);
-  else if ((snap.data().wheelLibraryVersion || 0) < 3) {
+  else if ((snap.data().wheelLibraryVersion || 0) < 4) {
     const version = snap.data().wheelLibraryVersion || 0;
     let activities = (snap.data().learningActivities || []).map((item) => ({
       ...item,
@@ -1044,6 +1082,7 @@ async function startData() {
     }));
     if (version < 2) activities.push(...adultLearningSeed);
     if (version < 3) activities.push(...expandedHunterSeed);
+    if (version < 4) activities.push(...twinklInspiredSeed);
     activities = activities.map(expandedArea);
     await setDoc(
       stateRef,
@@ -1051,7 +1090,7 @@ async function startData() {
         learningActivities: activities,
         learningSelections: snap.data().learningSelections || [],
         wheelHistory: snap.data().wheelHistory || {},
-        wheelLibraryVersion: 3,
+        wheelLibraryVersion: 4,
       },
       { merge: true },
     );
@@ -1088,6 +1127,8 @@ function bind() {
     learningPendingChoice = null;
     learningSpinning = false;
     if ($("#learningDialog").open) $("#learningDialog").close();
+    $("#learningResult").innerHTML = "";
+    $("#activityDetail").innerHTML = "";
     renderToday();
   };
   $("#changePlan").onclick = () => {
@@ -1112,7 +1153,20 @@ function bind() {
     (x) => ($(`#${x}Filter`).onchange = renderOutings),
   );
   $("#spinButton").onclick = spin;
+  $("#wheel").onclick = spin;
   $("#learningSpin").onclick = spinLearning;
+  $("#learningWheel").onclick = () => {
+    if (!learningPendingChoice) spinLearning();
+  };
+  $("#learningWheel").onkeydown = (event) => {
+    if (
+      (event.key === "Enter" || event.key === " ") &&
+      !learningPendingChoice
+    ) {
+      event.preventDefault();
+      spinLearning();
+    }
+  };
   $("#learningBack").onclick = () => {
     learningPendingChoice = null;
     learningPath.pop();
@@ -1287,6 +1341,9 @@ function toggleLearningComplete(on) {
 function openLearningWheel() {
   learningPath = [];
   learningPendingChoice = null;
+  $("#learningResult").innerHTML = "";
+  $("#activityDetail").innerHTML = "";
+  $("#learningFilterPanel").open = false;
   $("#learningDialog").showModal();
   $("#wheelEyebrow").textContent = wheelProfiles[currentPerson].eyebrow;
   renderLearningWheel();
@@ -1334,6 +1391,25 @@ function wheelSegments(options) {
     () => options,
   ).flat();
 }
+const wheelPalette = [
+  "#176b5b",
+  "#d3a33a",
+  "#d96c55",
+  "#3f6987",
+  "#7d9f8e",
+  "#75628f",
+  "#b66b3c",
+  "#3f8794",
+];
+function wheelColours(options) {
+  const unique = [...new Set(options)];
+  return new Map(
+    unique.map((label, index) => [
+      label,
+      wheelPalette[index % wheelPalette.length],
+    ]),
+  );
+}
 function renderLearningWheel() {
   const options = learningOptions(),
     displayOptions = wheelSegments(options),
@@ -1347,7 +1423,7 @@ function renderLearningWheel() {
       "Finally: choose the activity",
     ][stage] || "Chosen";
   $("#learningBreadcrumb").textContent = learningPath.join(" → ");
-  $("#learningFilters").hidden = stage > 0;
+  $("#learningFilterPanel").hidden = stage > 0;
   $("#learningBack").hidden = stage === 0;
   $("#learningRestart").hidden = stage === 0;
   $("#learningSpin").disabled = !options.length || learningSpinning;
@@ -1360,16 +1436,7 @@ function renderLearningWheel() {
     step.classList.toggle("active", index === stage);
     step.classList.toggle("done", index < stage);
   });
-  const colours = [
-    "#176b5b",
-    "#e7b84b",
-    "#e16b55",
-    "#789f91",
-    "#263d5b",
-    "#c78d31",
-    "#7867a8",
-    "#4f8da0",
-  ];
+  const colours = wheelColours(options);
   const size = displayOptions.length ? 360 / displayOptions.length : 360;
   wheel.classList.toggle("dense", displayOptions.length >= 7);
   wheel.style.setProperty(
@@ -1377,7 +1444,7 @@ function renderLearningWheel() {
     displayOptions.length >= 7 ? "min(29vw, 205px)" : "min(26vw, 180px)",
   );
   wheel.style.background = displayOptions.length
-    ? `conic-gradient(${displayOptions.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+    ? `conic-gradient(${displayOptions.map((label, i) => `${colours.get(label)} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
     : "#d9ddd7";
   wheel.style.setProperty("--counter-rotation", "0deg");
   wheel.style.transition = "none";
@@ -1435,6 +1502,32 @@ function activityInstructions(activity) {
       "Mix a small bubble solution, test it, then change one thing and compare the bubbles.";
     needs = "Water, washing-up liquid, a container and a bubble wand or loop.";
     finished = "Say which mixture worked better and why you think it did.";
+  } else if (/tornado in a jar/i.test(name)) {
+    what =
+      "Fill a clear jar mostly with water, add a small drop of washing-up liquid, close it tightly and swirl it to form a vortex. Observe how the water moves.";
+    needs =
+      "A clear jar with a secure lid, water and washing-up liquid; glitter is optional.";
+    finished = "Describe what makes the vortex appear and how long it lasts.";
+  } else if (/lava lamp/i.test(name)) {
+    what =
+      "With an adult, combine coloured water and oil in a clear container, then add part of an effervescent tablet and observe the moving bubbles.";
+    needs =
+      "A clear container, water, cooking oil, food colouring and an effervescent tablet.";
+    finished = "Explain why the oil and water remain in separate layers.";
+  } else if (/silly putty/i.test(name)) {
+    what =
+      "With an adult, follow a child-safe putty or cornflour-mixture recipe. Change the proportions slightly and compare the texture.";
+    needs =
+      "A washable work surface and ingredients from the chosen child-safe recipe.";
+    finished =
+      "Describe how the mixture behaves when squeezed, stretched or left alone.";
+  } else if (/potions measuring/i.test(name)) {
+    what =
+      "Set several target volumes, then measure coloured water accurately into different containers. Combine amounts and predict the new total.";
+    needs =
+      "Measuring jugs or cups, water, containers and optional food colouring.";
+    finished =
+      "Hit at least three target measurements and check the combined totals.";
   } else if (/spelling test/i.test(name)) {
     what =
       "Choose a short set of useful or tricky words. Read each aloud, write it from memory, then correct mistakes in a different colour.";
@@ -1510,7 +1603,6 @@ function spinLearning() {
   setTimeout(() => {
     learningSpinning = false;
     learningPendingChoice = chosen;
-    wheel.style.setProperty("--counter-rotation", `${-target}deg`);
     const result = $("#learningResult");
     result.textContent = `The wheel chose: ${chosen}`;
     result.hidden = false;
@@ -1608,16 +1700,7 @@ function renderOutings() {
   const options = data.outings.filter(eligible),
     displayOptions = wheelSegments(options.map((item) => item.name)),
     wheel = $("#wheel"),
-    colours = [
-      "#176b5b",
-      "#e7b84b",
-      "#e16b55",
-      "#789f91",
-      "#263d5b",
-      "#c78d31",
-      "#7867a8",
-      "#4f8da0",
-    ],
+    colours = wheelColours(options.map((item) => item.name)),
     size = displayOptions.length ? 360 / displayOptions.length : 360;
   wheel.classList.toggle("dense", displayOptions.length >= 7);
   wheel.style.setProperty(
@@ -1628,7 +1711,7 @@ function renderOutings() {
   wheel.style.transition = "none";
   wheel.style.transform = "rotate(0deg)";
   wheel.style.background = displayOptions.length
-    ? `conic-gradient(${displayOptions.map((_, i) => `${colours[i % colours.length]} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+    ? `conic-gradient(${displayOptions.map((label, i) => `${colours.get(label)} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
     : "#d9ddd7";
   wheel.innerHTML = displayOptions.length
     ? displayOptions
@@ -1669,7 +1752,6 @@ function spin() {
   wheel.style.transform = `rotate(${target}deg)`;
   setTimeout(() => {
     outingSpinning = false;
-    wheel.style.setProperty("--counter-rotation", `${-target}deg`);
     const result = $("#outingResult");
     result.innerHTML = `<strong>${esc(choice.name)}</strong><br><span>${esc(choice.time)} · ${esc(choice.weather)} weather · ${esc(choice.cost)}</span>`;
     result.hidden = false;
