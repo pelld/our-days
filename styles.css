@@ -156,6 +156,8 @@ textarea {
 .task-copy {
   display: grid;
   gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 .task-copy small {
   color: var(--muted);
@@ -552,6 +554,10 @@ dialog label {
   display: grid;
   gap: 9px;
 }
+.task-entry-actions { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+.mini-action { border: 0; border-radius: 9px; padding: 6px 8px; background: #edf0ec; color: var(--green); font-size: 0.72rem; font-weight: 800; white-space: nowrap; }
+.mini-action.danger, .danger-link { color: #9b352d; }
+.task-note { margin-top: 3px; color: var(--ink); font-size: 0.76rem; font-style: italic; white-space: pre-wrap; }
 .learning-title-actions {
   display: flex;
   align-items: center;
@@ -742,6 +748,39 @@ td select {
 .muted {
   color: var(--muted);
 }
+
+/* ============================================================
+   12. NEW THINGS MAP — central node, branches and group clusters
+   ============================================================ */
+.new-things-map { min-height: 560px; overflow: auto; border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(circle at center, #fff 0, #fffdf8 48%, #eef3ef 100%); box-shadow: var(--shadow); }
+.new-things-map svg { display: block; width: 100%; min-width: 760px; min-height: 560px; }
+.map-branch { stroke-width: 4; opacity: 0.42; }
+.map-item { cursor: pointer; }
+.map-item circle { stroke: white; stroke-width: 4; filter: drop-shadow(0 4px 7px #173b3328); transition: transform 0.15s ease; transform-box: fill-box; transform-origin: center; }
+.map-item:hover circle, .map-item:focus circle { transform: scale(1.08); stroke-width: 6; }
+.map-label { fill: white; font-size: 14px; font-weight: 900; text-anchor: middle; pointer-events: none; text-shadow: 0 1px 2px #0007; }
+.map-group-label { fill: white; font-size: 16px; font-weight: 900; text-anchor: middle; pointer-events: none; }
+.map-centre-label { fill: white; font: 900 21px Georgia, serif; text-anchor: middle; pointer-events: none; }
+.new-things-empty { display: grid; place-items: center; min-height: 560px; padding: 35px; text-align: center; color: var(--muted); }
+
+/* ============================================================
+   13. ACTIVITY JOURNAL — date-grouped rolling completion history
+   ============================================================ */
+.journal-list { display: grid; gap: 26px; }
+.journal-day { display: grid; grid-template-columns: minmax(130px, 190px) 1fr; gap: 22px; }
+.journal-date { margin: 0; font: 700 1.35rem Georgia, serif; }
+.journal-entries { display: grid; gap: 9px; }
+.journal-entry { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); box-shadow: 0 2px 8px #173b3310; }
+.journal-avatar { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; color: white; font-weight: 900; }
+.journal-copy h3, .journal-copy p { margin: 0; }
+.journal-copy h3 { font-size: 1rem; }
+.journal-copy .journal-meta { margin-top: 2px; color: var(--muted); font-size: 0.75rem; }
+.journal-copy .journal-detail { margin-top: 7px; white-space: pre-wrap; }
+.journal-actions { display: flex; gap: 5px; }
+.journal-empty { padding: 60px 25px; border: 1px dashed var(--line); border-radius: 18px; text-align: center; color: var(--muted); }
+.memory-actions { display: flex; justify-content: flex-end; gap: 5px; margin-top: 12px; }
+.split-actions { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; }
+.danger-link { border: 0; background: transparent; font-weight: 800; }
 .small {
   font-size: 0.8rem;
 }
@@ -757,7 +796,7 @@ td select {
   z-index: 5;
 }
 .bottom-nav button {
-  width: min(25%, 180px);
+  width: min(16.666%, 150px);
   border: 0;
   background: white;
   color: var(--muted);
@@ -871,4 +910,10 @@ textarea {
     width: 82px;
     font-size: 0.62rem;
   }
+  .bottom-nav button { padding-inline: 1px; font-size: 0.64rem; }
+  .bottom-nav span { font-size: 1.15rem; }
+  .journal-day { grid-template-columns: 1fr; gap: 8px; }
+  .journal-entry { grid-template-columns: 38px minmax(0, 1fr); }
+  .journal-avatar { width: 36px; height: 36px; }
+  .journal-actions { grid-column: 2; }
 }

@@ -111,6 +111,29 @@
         <div id="progressCards" class="progress-grid"></div>
       </section>
 
+      <!-- ============================================================
+           04. NEW THINGS TRIED — clustered visual record
+           ============================================================ -->
+      <section id="new-things" class="page">
+        <div class="section-heading">
+          <div><p class="eyebrow">TRY SOMETHING NEW</p><h2>New things tried</h2></div>
+          <button class="primary" id="addNewThing">＋ Add</button>
+        </div>
+        <p class="muted">Each branch is a group. Select any coloured circle to edit or delete it.</p>
+        <div id="newThingsMap" class="new-things-map"></div>
+      </section>
+
+      <!-- ============================================================
+           05. ACTIVITY JOURNAL — rolling list of completed tasks
+           ============================================================ -->
+      <section id="journal" class="page">
+        <div class="section-heading">
+          <div><p class="eyebrow">WHAT WE DID</p><h2>Activity journal</h2></div>
+          <select id="journalPerson" aria-label="Filter journal by person"><option value="all">Everyone</option></select>
+        </div>
+        <div id="journalList" class="journal-list"></div>
+      </section>
+
       <section id="memories" class="page">
         <div class="section-heading">
           <div>
@@ -149,6 +172,8 @@
     <nav class="bottom-nav">
       <button class="active" data-page="today"><span>✓</span>Today</button>
       <button data-page="explore"><span>◎</span>Explore</button>
+      <button data-page="journal"><span>≡</span>Journal</button>
+      <button data-page="new-things"><span>✦</span>Tried</button>
       <button data-page="progress"><span>↗</span>Progress</button>
       <button data-page="memories"><span>▣</span>Memories</button>
     </nav>
@@ -273,7 +298,7 @@
     </dialog>
     <dialog id="quickTaskDialog">
       <form id="quickTaskForm">
-        <h3>Add a task for today</h3>
+        <h3 id="quickTaskDialogTitle">Add a task for today</h3>
         <label>Task<input id="quickTaskName" required maxlength="120" /></label>
         <div class="form-row">
           <label
@@ -296,6 +321,28 @@
           </button>
           <button class="primary">Add task</button>
         </div>
+      </form>
+    </dialog>
+
+    <!-- 09A. Completion detail editor — used by baseline and wheel tasks -->
+    <dialog id="completionDialog">
+      <form id="completionForm">
+        <h3 id="completionDialogTitle">Add some detail</h3>
+        <label>What did you do?<textarea id="completionDetail" rows="5" maxlength="1000" placeholder="For example: 4-mile fell run via the quarry; felt good uphill."></textarea></label>
+        <div class="dialog-actions"><button type="button" class="secondary" id="cancelCompletion">Cancel</button><button class="primary">Save detail</button></div>
+      </form>
+    </dialog>
+
+    <!-- 09B. New thing editor — the same form handles add and edit -->
+    <dialog id="newThingDialog">
+      <form id="newThingForm">
+        <h3 id="newThingDialogTitle">Add a new thing tried</h3>
+        <div class="form-row"><label>Person<select id="newThingPerson"></select></label><label>Date<input id="newThingDate" type="date" required /></label></div>
+        <label>Group<input id="newThingGroup" list="newThingGroups" required maxlength="40" placeholder="Food" /></label>
+        <datalist id="newThingGroups"><option>Food</option><option>Place</option><option>Activity</option><option>Skill</option><option>Book or film</option><option>Nature</option></datalist>
+        <label>New thing<input id="newThingName" required maxlength="80" placeholder="Pink grapefruit" /></label>
+        <label>More detail<textarea id="newThingDetail" rows="3" maxlength="500"></textarea></label>
+        <div class="dialog-actions split-actions"><button type="button" class="danger-link" id="deleteNewThing" hidden>Delete</button><span></span><button type="button" class="secondary" id="cancelNewThing">Cancel</button><button class="primary">Save</button></div>
       </form>
     </dialog>
     <dialog id="memoryDialog">

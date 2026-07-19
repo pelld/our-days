@@ -19,8 +19,12 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
+  deleteObject,
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
 
+// ============================================================
+// 01. FIREBASE CONNECTION AND SHARED HELPERS
+// ============================================================
 const config = {
   apiKey: "AIzaSyBJKj7RaLBW7G7XoS9zm_PCrr4My86aYKI",
   authDomain: "our-days-b22c6.firebaseapp.com",
@@ -44,6 +48,9 @@ const esc = (value) =>
     (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[char],
   );
 
+// ============================================================
+// 02. STARTING DATA — people, baseline tasks and outings
+// ============================================================
 const seed = {
   people: [
     { id: "hunter", name: "Hunter", colour: "#e16b55", target: 300 },
@@ -350,6 +357,7 @@ const seed = {
     },
   ],
   completions: [],
+  newThings: [],
   memories: [],
   plans: {
     hunter: "Morning jobs, schoolwork, then see where the day takes us.",
@@ -402,6 +410,9 @@ const outingExpansion = [
   active: true,
 }));
 seed.outings.push(...outingExpansion);
+// ============================================================
+// 03. ACTIVITY LIBRARY — editable three-level wheel content
+// ============================================================
 const learningSeed = [];
 const addLearning = (area, subject, activities) =>
   activities.forEach(
@@ -1167,6 +1178,9 @@ seed.learningActivities = learningSeed;
 seed.wheelLibraryVersion = 6;
 seed.wheelHistory = {};
 
+// ============================================================
+// 04. RUNTIME STATE — current person, dialogs and wheel animation
+// ============================================================
 let data = structuredClone(seed),
   currentPerson = "hunter",
   manageType = "tasks",
@@ -1178,9 +1192,16 @@ let data = structuredClone(seed),
   outingSpinning = false,
   outingAnimation = null,
   lastOutingId = null,
+  editingCompletionKey = null,
+  editingNewThingId = null,
+  editingSelectionId = null,
+  editingMemoryId = null,
   unsubscribe = null,
   ready = false;
 
+// ============================================================
+// 05. FIREBASE SAVE, MIGRATION AND LIVE DATA LISTENER
+// ============================================================
 async function save() {
   if (ready) await setDoc(stateRef, data);
 }
@@ -1234,6 +1255,15 @@ async function startData() {
 function completed(id) {
   return data.completions.some((x) => x.taskId === id && x.date === todayKey());
 }
+function completionKey(completion) {
+  return completion.id || `${completion.taskId}::${completion.date}`;
+}
+function completionFromKey(key) {
+  return (data.completions || []).find((completion) => completionKey(completion) === key);
+}
+// ============================================================
+// 06. PAGE SETUP, EVENT BINDING AND NAVIGATION
+// ============================================================
 function initUI() {
   $("#todayDate").textContent = new Intl.DateTimeFormat("en-GB", {
     weekday: "long",
@@ -1266,13 +1296,19 @@ function bind() {
     data.plans[currentPerson] = $("#planInput").value;
     save();
   };
-  $("#quickMemory").onclick = $("#addMemory").onclick = () =>
-    $("#memoryDialog").showModal();
+  $("#quickMemory").onclick = $("#addMemory").onclick = () => openMemory();
   $("#cancelMemory").onclick = () => $("#memoryDialog").close();
   $("#memoryForm").onsubmit = addMemory;
   $("#quickTaskForm").onsubmit = addQuickTask;
   $('[data-close="quickTaskDialog"]').onclick = () =>
     $("#quickTaskDialog").close();
+  $("#completionForm").onsubmit = saveCompletionDetail;
+  $("#cancelCompletion").onclick = () => $("#completionDialog").close();
+  $("#addNewThing").onclick = () => openNewThing();
+  $("#newThingForm").onsubmit = saveNewThing;
+  $("#cancelNewThing").onclick = () => $("#newThingDialog").close();
+  $("#deleteNewThing").onclick = deleteNewThing;
+  $("#journalPerson").onchange = renderJournal;
   $("#choiceForm").onsubmit = saveTaskChoice;
   $("#cancelChoice").onclick = () => {
     pendingTaskId = null;
@@ -1362,7 +1398,7 @@ function showPage(id) {
   window.scrollTo(0, 0);
 }
 function renderAll() {
-  const selected = $("#personSelect").value || currentPerson;
+  const selected = $("#personSelect").value || currentPerson, journalSelected = $("#journalPerson").value || "all";
   $("#personSelect").innerHTML = data.people
     .map((p) => `<option value="${p.id}">${p.name}</option>`)
     .join("");
@@ -1370,12 +1406,19 @@ function renderAll() {
     ? selected
     : "hunter";
   $("#personSelect").value = currentPerson;
+  $("#journalPerson").innerHTML = `<option value="all">Everyone</option>${data.people.map((person) => `<option value="${person.id}">${esc(person.name)}</option>`).join("")}`;
+  $("#journalPerson").value = data.people.some((person) => person.id === journalSelected) ? journalSelected : "all";
   renderToday();
   renderOutings();
   renderProgress();
   renderMemories();
+  renderJournal();
+  renderNewThings();
   renderManage();
 }
+// ============================================================
+// 07. TODAY PAGE — baseline tasks, completion detail and controls
+// ============================================================
 function renderToday() {
   const groups = {};
   data.tasks
@@ -1396,7 +1439,7 @@ function renderToday() {
             const completion = data.completions.find(
               (x) => x.taskId === t.id && x.date === todayKey(),
             );
-            return `<label class="task ${completion ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${completion ? "checked" : ""}><span class="task-copy"><span>${esc(t.name)}</span>${completion?.choice ? `<small>${esc(completion.choice)}</small>` : t.choices?.length ? `<small>Choose when completed</small>` : ""}</span>${t.points ? `<span class="points">+${t.points}</span>` : ""}</label>`;
+            return `<article class="task ${completion ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${completion ? "checked" : ""}><span class="task-copy"><span>${esc(t.name)}</span>${completion?.choice ? `<small>${esc(completion.choice)}</small>` : t.choices?.length ? `<small>Choose when completed</small>` : ""}${completion?.detail ? `<span class="task-note">${esc(completion.detail)}</span>` : ""}</span>${t.points ? `<span class="points">+${t.points}</span>` : ""}${completion ? `<span class="task-entry-actions"><button class="mini-action" data-edit-completion="${esc(completionKey(completion))}">${completion.detail ? "Edit detail" : "Add detail"}</button></span>` : ""}</article>`;
           })
           .join("")}</div></section>`,
     )
@@ -1404,7 +1447,11 @@ function renderToday() {
   $$("[data-task]").forEach(
     (c) => (c.onchange = () => toggleTask(c.dataset.task, c.checked)),
   );
+  bindEntryControls();
 }
+// ============================================================
+// 08. PERSONALISED THREE-LEVEL ACTIVITY WHEEL
+// ============================================================
 const wheelProfiles = {
   hunter: {
     title: "Today's learning",
@@ -1448,10 +1495,8 @@ function renderLearningToday() {
     selections = todayLearningSelection();
   const cards = selections
     .map((selection, index) => {
-      const activity = data.learningActivities.find(
-          (item) => item.id === selection.activityId,
-        ),
-        chosen = activity || {
+      const activity = data.learningActivities.find((item) => item.id === selection.activityId),
+        chosen = activity ? { ...activity, name: selection.customName || activity.name, minutes: selection.minutes || activity.minutes } : {
           name: selection.customName || "Added task",
           area: "Added task",
           subject: "Today",
@@ -1459,9 +1504,10 @@ function renderLearningToday() {
         },
         id = selectionId(selection, index),
         taskId = `wheel-${id}`,
-        done = completed(taskId),
+        completion = data.completions.find((item) => item.taskId === taskId && item.date === todayKey()),
+        done = Boolean(completion),
         points = selection.points ?? 5;
-      return `<label class="task ${done ? "done" : ""}"><input type="checkbox" data-learning-complete="${esc(id)}" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(chosen.name)}</span><small>${esc(chosen.area)} · ${esc(chosen.subject)} · ${chosen.minutes} minutes</small></span>${points ? `<span class="points">+${points}</span>` : ""}</label>`;
+      return `<article class="task ${done ? "done" : ""}"><input type="checkbox" data-learning-complete="${esc(id)}" ${done ? "checked" : ""}><span class="task-copy"><span>${esc(chosen.name)}</span><small>${esc(chosen.area)} · ${esc(chosen.subject)} · ${chosen.minutes} minutes</small>${completion?.detail ? `<span class="task-note">${esc(completion.detail)}</span>` : ""}</span>${points ? `<span class="points">+${points}</span>` : ""}<span class="task-entry-actions">${completion ? `<button class="mini-action" data-edit-completion="${esc(completionKey(completion))}">${completion.detail ? "Edit detail" : "Add detail"}</button>` : ""}<button class="mini-action" data-edit-selection="${esc(id)}">Edit</button><button class="mini-action danger" data-delete-selection="${esc(id)}">Delete</button></span></article>`;
     })
     .join("");
   host.innerHTML = `<section class="task-section learning-today"><div class="learning-title"><h3>${profile.title}</h3><div class="learning-title-actions"><button class="text-link" id="chooseLearning">${selections.length ? "Spin again" : profile.button}</button><button class="text-link" id="addQuickTask">＋ Add task</button></div></div>${selections.length ? `<div class="learning-task-list">${cards}</div>` : `<button class="learning-launch" id="learningLaunch"><span class="mini-wheel" aria-hidden="true"></span><span class="launch-copy"><strong>${profile.button}</strong><span>${profile.tagline}</span></span></button>`}</section>`;
@@ -1477,6 +1523,7 @@ function renderLearningToday() {
           event.target.checked,
         )),
   );
+  bindEntryControls();
 }
 function toggleLearningComplete(id, on) {
   const selection = todayLearningSelection().find(
@@ -1488,6 +1535,7 @@ function toggleLearningComplete(id, on) {
   );
   if (on)
     data.completions.push({
+      id: crypto.randomUUID(),
       taskId,
       person: currentPerson,
       date: todayKey(),
@@ -1496,10 +1544,14 @@ function toggleLearningComplete(id, on) {
     });
   save();
 }
-function openQuickTask() {
+function openQuickTask(selectionIdToEdit = null) {
+  editingSelectionId = typeof selectionIdToEdit === "string" ? selectionIdToEdit : null;
   $("#quickTaskForm").reset();
-  $("#quickTaskPoints").value = 5;
-  $("#quickTaskMinutes").value = 10;
+  const selection = editingSelectionId ? (data.learningSelections || []).find((item, index) => selectionId(item, index) === editingSelectionId) : null;
+  $("#quickTaskDialogTitle").textContent = selection ? "Edit today’s task" : "Add a task for today";
+  $("#quickTaskName").value = selection ? selection.customName || data.learningActivities.find((item) => item.id === selection.activityId)?.name || "" : "";
+  $("#quickTaskPoints").value = selection?.points ?? 5;
+  $("#quickTaskMinutes").value = selection?.minutes || data.learningActivities.find((item) => item.id === selection?.activityId)?.minutes || 10;
   $("#quickTaskDialog").showModal();
   $("#quickTaskName").focus();
 }
@@ -1508,14 +1560,12 @@ function addQuickTask(event) {
   const name = $("#quickTaskName").value.trim();
   if (!name) return;
   data.learningSelections ||= [];
-  data.learningSelections.push({
-    id: crypto.randomUUID(),
-    person: currentPerson,
-    date: todayKey(),
-    customName: name,
-    minutes: +$("#quickTaskMinutes").value,
-    points: +$("#quickTaskPoints").value || 0,
-  });
+  const selection = editingSelectionId ? data.learningSelections.find((item, index) => selectionId(item, index) === editingSelectionId) : null;
+  if (selection) Object.assign(selection, { customName: name, minutes: +$("#quickTaskMinutes").value, points: +$("#quickTaskPoints").value || 0 });
+  else data.learningSelections.push({ id: crypto.randomUUID(), person: currentPerson, date: todayKey(), customName: name, minutes: +$("#quickTaskMinutes").value, points: +$("#quickTaskPoints").value || 0 });
+  const completion = editingSelectionId && data.completions.find((item) => item.taskId === `wheel-${editingSelectionId}` && item.date === todayKey());
+  if (completion && selection) completion.points = selection.points;
+  editingSelectionId = null;
   save();
   $("#quickTaskDialog").close();
 }
@@ -1839,6 +1889,9 @@ function selectLearningActivity() {
   save();
   $("#learningDialog").close();
 }
+// ============================================================
+// 09. BASELINE TASK COMPLETION AND CHOICE HANDLING
+// ============================================================
 function toggleTask(id, on) {
   data.completions = data.completions.filter(
     (x) => !(x.taskId === id && x.date === todayKey()),
@@ -1858,6 +1911,7 @@ function toggleTask(id, on) {
 }
 function completeTask(task, choice = "") {
   data.completions.push({
+    id: crypto.randomUUID(),
     taskId: task.id,
     person: task.person,
     date: todayKey(),
@@ -1873,6 +1927,9 @@ function saveTaskChoice(event) {
   pendingTaskId = null;
   $("#choiceDialog").close();
 }
+// ============================================================
+// 10. OUTINGS WHEEL — condition filters and non-repeating spin
+// ============================================================
 function eligible(o) {
   const loc = $("#locationFilter").value,
     w = $("#weatherFilter").value,
@@ -1964,6 +2021,133 @@ function spin() {
     $("#spinButton").textContent = "Spin again";
   };
 }
+
+// ============================================================
+// 12. ENTRY EDITING — notes, task changes and deletion
+// ============================================================
+function bindEntryControls() {
+  $$('[data-edit-completion]').forEach((button) => (button.onclick = () => openCompletionDetail(button.dataset.editCompletion)));
+  $$('[data-edit-selection]').forEach((button) => (button.onclick = () => openQuickTask(button.dataset.editSelection)));
+  $$('[data-delete-selection]').forEach((button) => (button.onclick = () => deleteLearningSelection(button.dataset.deleteSelection)));
+  $$('[data-delete-completion]').forEach((button) => (button.onclick = () => deleteCompletion(button.dataset.deleteCompletion)));
+}
+function completionTitle(completion) {
+  const baseline = data.tasks.find((task) => task.id === completion.taskId);
+  if (baseline) return baseline.name;
+  if (completion.taskId.startsWith("wheel-")) {
+    const wantedId = completion.taskId.slice(6), selection = (data.learningSelections || []).find((item, index) => selectionId(item, index) === wantedId), activity = selection && data.learningActivities.find((item) => item.id === selection.activityId);
+    const chosenActivity = data.learningActivities.find((item) => item.id === completion.choice);
+    return selection?.customName || activity?.name || chosenActivity?.name || "Chosen activity";
+  }
+  return "Completed task";
+}
+function openCompletionDetail(key) {
+  const completion = completionFromKey(key);
+  if (!completion) return;
+  editingCompletionKey = key;
+  $("#completionDialogTitle").textContent = completionTitle(completion);
+  $("#completionDetail").value = completion.detail || "";
+  $("#completionDialog").showModal();
+  $("#completionDetail").focus();
+}
+function saveCompletionDetail(event) {
+  event.preventDefault();
+  const completion = completionFromKey(editingCompletionKey);
+  if (completion) completion.detail = $("#completionDetail").value.trim();
+  editingCompletionKey = null;
+  save();
+  $("#completionDialog").close();
+}
+function deleteCompletion(key) {
+  const completion = completionFromKey(key);
+  if (!completion || !confirm(`Delete the completed entry “${completionTitle(completion)}”?`)) return;
+  data.completions = data.completions.filter((item) => completionKey(item) !== key);
+  save();
+}
+function deleteLearningSelection(id) {
+  const selection = (data.learningSelections || []).find((item, index) => selectionId(item, index) === id), activity = selection && data.learningActivities.find((item) => item.id === selection.activityId), title = selection?.customName || activity?.name || "this task";
+  if (!selection || !confirm(`Delete “${title}” from today?`)) return;
+  data.learningSelections = data.learningSelections.filter((item, index) => selectionId(item, index) !== id);
+  data.completions = data.completions.filter((completion) => completion.taskId !== `wheel-${id}`);
+  save();
+}
+
+// ============================================================
+// 13. ACTIVITY JOURNAL — rolling, date-grouped completion history
+// ============================================================
+function formatJournalDate(date) {
+  return new Date(`${date}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+function groupBy(items, keyFunction) {
+  return items.reduce((groups, item) => { const key = keyFunction(item); (groups[key] ||= []).push(item); return groups; }, {});
+}
+function renderJournal() {
+  const filter = $("#journalPerson").value || "all", completions = (data.completions || []).filter((completion) => filter === "all" || completion.person === filter), newThings = (data.newThings || []).filter((item) => filter === "all" || item.person === filter), entries = [
+    ...completions.map((completion) => ({ type: "completion", date: completion.date, person: completion.person, title: completionTitle(completion), detail: completion.detail || "", meta: completion.choice && !String(completion.choice).startsWith("learn-") && !String(completion.choice).startsWith("wheel-") ? completion.choice : "Completed task", key: completionKey(completion) })),
+    ...newThings.map((item) => ({ type: "newThing", date: item.date, person: item.person, title: item.name, detail: item.detail || "", meta: `New ${item.group.toLowerCase()} tried`, key: item.id })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+  const groups = groupBy(entries, (entry) => entry.date), host = $("#journalList");
+  if (!entries.length) { host.innerHTML = '<div class="journal-empty">Completed tasks and new things tried will build a rolling record here.</div>'; return; }
+  host.innerHTML = Object.entries(groups).map(([date, dayEntries]) => `<section class="journal-day"><h3 class="journal-date">${formatJournalDate(date)}</h3><div class="journal-entries">${dayEntries.map((entry) => {
+    const person = data.people.find((item) => item.id === entry.person) || { name: "Family", colour: "#176b5b" };
+    return `<article class="journal-entry"><span class="journal-avatar" style="background:${person.colour}">${esc(person.name[0])}</span><div class="journal-copy"><h3>${esc(entry.title)}</h3><p class="journal-meta">${esc(person.name)} · ${esc(entry.meta)}</p>${entry.detail ? `<p class="journal-detail">${esc(entry.detail)}</p>` : ""}</div><div class="journal-actions">${entry.type === "completion" ? `<button class="mini-action" data-edit-completion="${esc(entry.key)}">${entry.detail ? "Edit" : "Add detail"}</button><button class="mini-action danger" data-delete-completion="${esc(entry.key)}">Delete</button>` : `<button class="mini-action" data-edit-new-thing="${esc(entry.key)}">Edit</button>`}</div></article>`;
+  }).join("")}</div></section>`).join("");
+  bindEntryControls();
+  $$('[data-edit-new-thing]').forEach((button) => (button.onclick = () => openNewThing(button.dataset.editNewThing)));
+}
+
+// ============================================================
+// 14. NEW THINGS TRIED — grouped radial map and entry editor
+// ============================================================
+const newThingPalette = ["#176b5b", "#d96c55", "#3f6987", "#d09a31", "#75628f", "#3f8794", "#a75b43", "#668b72"];
+function groupColour(group) {
+  const hash = [...group.toLowerCase()].reduce((total, character) => total + character.charCodeAt(0), 0);
+  return newThingPalette[hash % newThingPalette.length];
+}
+function svgLabel(text, x, y, cssClass, max = 13) {
+  const words = String(text).split(/\s+/), lines = [];
+  for (const word of words) { if (!lines.length || `${lines.at(-1)} ${word}`.length > max) lines.push(word); else lines[lines.length - 1] += ` ${word}`; }
+  const start = y - ((lines.length - 1) * 8);
+  return `<text x="${x}" y="${start}" class="${cssClass}">${lines.slice(0, 3).map((line, index) => `<tspan x="${x}" dy="${index ? 16 : 0}">${esc(line)}</tspan>`).join("")}</text>`;
+}
+function renderNewThings() {
+  const items = data.newThings || [], host = $("#newThingsMap");
+  if (!items.length) { host.innerHTML = '<div class="new-things-empty"><div><strong>No new things recorded yet.</strong><br>Try adding “Food → Pink grapefruit” as the first one.</div></div>'; return; }
+  const groups = Object.entries(groupBy(items, (item) => item.group.trim() || "Other")), width = 1000, height = Math.max(650, groups.length > 6 ? 820 : 700), centreX = width / 2, centreY = height / 2, orbitX = groups.length > 6 ? 350 : 300, orbitY = groups.length > 6 ? 295 : 235;
+  let branches = "", nodes = "";
+  groups.forEach(([group, groupItems], groupIndex) => {
+    const angle = (-Math.PI / 2) + (groupIndex * Math.PI * 2) / groups.length, groupX = centreX + Math.cos(angle) * orbitX, groupY = centreY + Math.sin(angle) * orbitY, colour = groupColour(group);
+    branches += `<line x1="${centreX}" y1="${centreY}" x2="${groupX}" y2="${groupY}" class="map-branch" stroke="${colour}" />`;
+    nodes += `<circle cx="${groupX}" cy="${groupY}" r="61" fill="${colour}" />${svgLabel(group, groupX, groupY + 5, "map-group-label", 12)}`;
+    groupItems.forEach((item, itemIndex) => { const ring = Math.floor(itemIndex / 8), itemAngle = angle + Math.PI + ((itemIndex % 8) - Math.min(7, groupItems.length - 1) / 2) * 0.42, radius = 112 + ring * 78, itemX = groupX + Math.cos(itemAngle) * radius, itemY = groupY + Math.sin(itemAngle) * radius; branches += `<line x1="${groupX}" y1="${groupY}" x2="${itemX}" y2="${itemY}" class="map-branch" stroke="${colour}" />`; nodes += `<g class="map-item" data-new-thing="${esc(item.id)}" tabindex="0" role="button"><circle cx="${itemX}" cy="${itemY}" r="49" fill="${colour}" />${svgLabel(item.name, itemX, itemY + 4, "map-label", 11)}</g>`; });
+  });
+  host.innerHTML = `<svg viewBox="0 0 ${width} ${height}" aria-label="Map of new things tried">${branches}<circle cx="${centreX}" cy="${centreY}" r="92" fill="#18342f" />${svgLabel("New things tried", centreX, centreY - 4, "map-centre-label", 10)}${nodes}</svg>`;
+  $$('[data-new-thing]').forEach((node) => { node.onclick = () => openNewThing(node.dataset.newThing); node.onkeydown = (event) => { if (event.key === "Enter" || event.key === " ") openNewThing(node.dataset.newThing); }; });
+}
+function openNewThing(id = null) {
+  editingNewThingId = typeof id === "string" ? id : null;
+  const item = editingNewThingId ? (data.newThings || []).find((entry) => entry.id === editingNewThingId) : null;
+  $("#newThingDialogTitle").textContent = item ? "Edit new thing tried" : "Add a new thing tried";
+  $("#newThingPerson").innerHTML = data.people.map((person) => `<option value="${person.id}">${esc(person.name)}</option>`).join("");
+  $("#newThingPerson").value = item?.person || currentPerson; $("#newThingDate").value = item?.date || todayKey(); $("#newThingGroup").value = item?.group || ""; $("#newThingName").value = item?.name || ""; $("#newThingDetail").value = item?.detail || ""; $("#deleteNewThing").hidden = !item;
+  $("#newThingDialog").showModal();
+}
+function saveNewThing(event) {
+  event.preventDefault();
+  data.newThings ||= [];
+  const values = { person: $("#newThingPerson").value, date: $("#newThingDate").value, group: $("#newThingGroup").value.trim(), name: $("#newThingName").value.trim(), detail: $("#newThingDetail").value.trim() }, item = editingNewThingId ? data.newThings.find((entry) => entry.id === editingNewThingId) : null;
+  if (item) Object.assign(item, values); else data.newThings.push({ id: crypto.randomUUID(), ...values });
+  editingNewThingId = null; save(); $("#newThingDialog").close();
+}
+function deleteNewThing() {
+  const item = (data.newThings || []).find((entry) => entry.id === editingNewThingId);
+  if (!item || !confirm(`Delete “${item.name}”?`)) return;
+  data.newThings = data.newThings.filter((entry) => entry.id !== editingNewThingId); editingNewThingId = null; save(); $("#newThingDialog").close();
+}
+
+// ============================================================
+// 15. POINTS AND REWARD PROGRESS
+// ============================================================
 function renderProgress() {
   const totals = Object.fromEntries(
     data.people.map((p) => [
@@ -1982,6 +2166,9 @@ function renderProgress() {
     })
     .join("");
 }
+// ============================================================
+// 16. SCRAPBOOK MEMORIES AND PHOTO UPLOADS
+// ============================================================
 async function compress(file) {
   const image = await createImageBitmap(file),
     scale = Math.min(1, 1800 / Math.max(image.width, image.height)),
@@ -1990,6 +2177,12 @@ async function compress(file) {
   canvas.height = Math.round(image.height * scale);
   canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
   return new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.82));
+}
+function openMemory(id = null) {
+  editingMemoryId = typeof id === "string" ? id : null;
+  const memory = editingMemoryId ? data.memories.find((item) => item.id === editingMemoryId) : null;
+  $("#memoryForm").reset(); $("#memoryTitle").value = memory?.title || ""; $("#memoryText").value = memory?.text || ""; $("#saveMemory").textContent = memory ? "Save changes" : "Add memory";
+  $("#memoryDialog").showModal();
 }
 async function addMemory(e) {
   e.preventDefault();
@@ -2000,21 +2193,19 @@ async function addMemory(e) {
   button.textContent = "Saving…";
   button.disabled = true;
   try {
-    let photoPath = "";
+    const existing = editingMemoryId ? data.memories.find((item) => item.id === editingMemoryId) : null;
+    let photoPath = existing?.photoPath || "";
     if (file) {
       const blob = await compress(file);
+      if (existing?.photoPath) await deleteObject(ref(storage, existing.photoPath)).catch(() => {});
       photoPath = `memories/${crypto.randomUUID()}.jpg`;
       await uploadBytes(ref(storage, photoPath), blob, {
         contentType: "image/jpeg",
       });
     }
-    data.memories.unshift({
-      id: crypto.randomUUID(),
-      title,
-      text: $("#memoryText").value,
-      date: todayKey(),
-      photoPath,
-    });
+    const values = { title, text: $("#memoryText").value, photoPath };
+    if (existing) Object.assign(existing, values); else data.memories.unshift({ id: crypto.randomUUID(), date: todayKey(), ...values });
+    editingMemoryId = null;
     await save();
     $("#memoryForm").reset();
     $("#memoryDialog").close();
@@ -2024,6 +2215,12 @@ async function addMemory(e) {
     button.textContent = "Add memory";
     button.disabled = false;
   }
+}
+async function deleteMemory(id) {
+  const memory = data.memories.find((item) => item.id === id);
+  if (!memory || !confirm(`Delete the memory “${memory.title}”?`)) return;
+  if (memory.photoPath) await deleteObject(ref(storage, memory.photoPath)).catch(() => {});
+  data.memories = data.memories.filter((item) => item.id !== id); save();
 }
 function renderMemories() {
   const el = $("#memoryList");
@@ -2035,7 +2232,7 @@ function renderMemories() {
   el.innerHTML = data.memories
     .map(
       (m) =>
-        `<article class="memory-card">${m.photoPath ? `<img data-photo="${m.photoPath}" alt="">` : ""}<div class="memory-body"><p class="memory-date">${new Date(m.date + "T12:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p><h3>${m.title}</h3><p>${m.text || ""}</p></div></article>`,
+        `<article class="memory-card">${m.photoPath ? `<img data-photo="${m.photoPath}" alt="">` : ""}<div class="memory-body"><p class="memory-date">${new Date(m.date + "T12:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p><h3>${esc(m.title)}</h3><p>${esc(m.text || "")}</p><div class="memory-actions"><button class="mini-action" data-edit-memory="${esc(m.id)}">Edit</button><button class="mini-action danger" data-delete-memory="${esc(m.id)}">Delete</button></div></div></article>`,
     )
     .join("");
   $$("[data-photo]").forEach(async (img) => {
@@ -2045,7 +2242,12 @@ function renderMemories() {
       img.alt = "Photo unavailable";
     }
   });
+  $$("[data-edit-memory]").forEach((button) => (button.onclick = () => openMemory(button.dataset.editMemory)));
+  $$("[data-delete-memory]").forEach((button) => (button.onclick = () => deleteMemory(button.dataset.deleteMemory)));
 }
+// ============================================================
+// 17. ADMIN TABLES — edit the baseline tasks, outings and wheel
+// ============================================================
 function options(values, current) {
   return values
     .map(
