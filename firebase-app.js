@@ -1118,6 +1118,31 @@ addPersonal("lydia", "Movement", "Gentle options", ["Take a twenty-minute walk",
 addPersonal("lydia", "People and memories", "Connect", ["Phone or message someone", "Plan a relaxed family thing", "Add a scrapbook memory", "Choose photographs to keep", "Visit someone or invite them over"]);
 addPersonal("lydia", "Home and garden", "Small satisfactions", ["Clear one visible surface", "Tend one neglected patch", "Pick or arrange flowers", "Make one corner more comfortable", "Finish a ten-minute household job"]);
 const libraryFiveSeed = learningSeed.slice(libraryFiveStart);
+const librarySixStart = learningSeed.length;
+addLearning("French and France", "Speaking and listening", [
+  ["Practise five useful café phrases", 10, "indoors", "together", "active"],
+  ["Listen for familiar words in a French clip", 10],
+  ["Play a French question-and-answer game", 10, "indoors", "together", "active"],
+  ["Record a ten-line pretend conversation", 20],
+  ["Give directions around the house in French", 10, "indoors", "together", "active"],
+]);
+addLearning("French and France", "Culture and places", [
+  ["Find Dieppe on a map and plan a route", 10],
+  ["Discover five facts about Normandy", 20],
+  ["Make a French food picture menu", 20],
+  ["Compare a French and English daily routine", 10],
+  ["Choose a French place you would like to visit", 10],
+]);
+addPersonal("amelia", "Life beyond screens", "People and places", ["Meet or call a friend", "Explore somewhere nearby", "Plan a small day out", "Visit a café without scrolling", "Take the dog on a different route"], 30, "active");
+addPersonal("amelia", "Music and culture", "Create and share", ["Learn part of a song", "Draw from a photograph", "Make a short photo essay", "Recommend something to a friend", "Create a mood board without TikTok"]);
+addPersonal("amelia", "Friends and future", "Skills and independence", ["Cook a useful meal", "Learn one practical money skill", "Update a CV or achievements list", "Research one job that sounds interesting", "Plan a journey independently"]);
+addPersonal("david", "Local exploration", "History and nature", ["Identify a local plant or bird", "Read about one local historical site", "Find an old map of the area", "Walk somewhere with a geological feature", "Visit a churchyard or monument"]);
+addPersonal("david", "Words and ideas", "Investigate and remember", ["Look up the origin of a word", "Make notes on a useful idea", "Learn the story behind a local place name", "Write down something Hunter said", "Explain a complicated idea simply"]);
+addPersonal("david", "Practical projects", "Plan and improve", ["Price the materials for a job", "Draw a quick plan before starting", "Organise one useful set of tools", "Improve a system that annoys you", "Finish the final ten percent of a job"]);
+addPersonal("lydia", "Pleasure and culture", "Go and discover", ["Visit somewhere pleasant", "Browse a library or bookshop", "Try a new café", "Look around a garden or gallery", "Choose a film neither of you has seen"]);
+addPersonal("lydia", "People and memories", "Record and celebrate", ["Write down a family story", "Choose a photograph and caption it", "Plan a small celebration", "Make a short summer list", "Record something worth remembering"]);
+addPersonal("lydia", "Home and garden", "Grow and arrange", ["Plant or pot something", "Take a cutting", "Arrange a small bunch of flowers", "Choose one garden improvement", "Harvest or use something from the garden"]);
+const librarySixSeed = learningSeed.slice(librarySixStart);
 const adultLearningSeed = learningSeed.slice(
   adultLibraryStart,
   expandedHunterStart,
@@ -1139,7 +1164,7 @@ for (let i = 0; i < learningSeed.length; i++)
   learningSeed[i] = expandedArea(learningSeed[i]);
 
 seed.learningActivities = learningSeed;
-seed.wheelLibraryVersion = 5;
+seed.wheelLibraryVersion = 6;
 seed.wheelHistory = {};
 
 let data = structuredClone(seed),
@@ -1149,7 +1174,9 @@ let data = structuredClone(seed),
   learningPath = [],
   learningPendingChoice = null,
   learningSpinning = false,
+  learningAnimation = null,
   outingSpinning = false,
+  outingAnimation = null,
   lastOutingId = null,
   unsubscribe = null,
   ready = false;
@@ -1160,7 +1187,7 @@ async function save() {
 async function startData() {
   const snap = await getDoc(stateRef);
   if (!snap.exists()) await setDoc(stateRef, seed);
-  else if ((snap.data().wheelLibraryVersion || 0) < 5) {
+  else if ((snap.data().wheelLibraryVersion || 0) < 6) {
     const version = snap.data().wheelLibraryVersion || 0;
     let activities = (snap.data().learningActivities || []).map((item) => ({
       ...item,
@@ -1170,6 +1197,7 @@ async function startData() {
     if (version < 3) activities.push(...expandedHunterSeed);
     if (version < 4) activities.push(...twinklInspiredSeed);
     if (version < 5) activities.push(...libraryFiveSeed);
+    if (version < 6) activities.push(...librarySixSeed);
     activities = activities.map(expandedArea);
     const existingOutings = snap.data().outings || [];
     const outingIds = new Set(existingOutings.map((item) => item.id));
@@ -1189,7 +1217,7 @@ async function startData() {
           ...outingExpansion.filter((item) => !outingIds.has(item.id)),
         ],
         wheelHistory: snap.data().wheelHistory || {},
-        wheelLibraryVersion: 5,
+        wheelLibraryVersion: 6,
       },
       { merge: true },
     );
@@ -1538,7 +1566,7 @@ function learningOptions() {
     .map((item) => item.name);
 }
 function wheelSegments(options) {
-  if (options.length < 2 || options.length > 4) return [...options];
+  if (!options.length || options.length > 4) return [...options];
   return Array.from(
     { length: Math.ceil(8 / options.length) },
     () => options,
@@ -1562,6 +1590,16 @@ function wheelColours(options) {
       wheelPalette[index % wheelPalette.length],
     ]),
   );
+}
+function wheelBackground(displayOptions, colours, size) {
+  return `conic-gradient(${displayOptions
+    .map((label, index) => {
+      const start = index * size,
+        end = (index + 1) * size,
+        divider = Math.min(0.8, size * 0.06);
+      return `${colours.get(label)} ${start}deg ${end - divider}deg, #f8f4eb ${end - divider}deg ${end}deg`;
+    })
+    .join(",")})`;
 }
 function renderLearningWheel() {
   const options = learningOptions(),
@@ -1592,15 +1630,17 @@ function renderLearningWheel() {
   const colours = wheelColours(options);
   const size = displayOptions.length ? 360 / displayOptions.length : 360;
   wheel.classList.toggle("dense", displayOptions.length >= 7);
+  wheel.classList.toggle("very-dense", displayOptions.length >= 13);
   wheel.style.setProperty(
     "--wheel-radius",
     displayOptions.length >= 7 ? "min(29vw, 205px)" : "min(26vw, 180px)",
   );
   wheel.style.background = displayOptions.length
-    ? `conic-gradient(${displayOptions.map((label, i) => `${colours.get(label)} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+    ? wheelBackground(displayOptions, colours, size)
     : "#d9ddd7";
   wheel.style.setProperty("--counter-rotation", "0deg");
-  wheel.style.transition = "none";
+  learningAnimation?.cancel();
+  learningAnimation = null;
   wheel.style.transform = "rotate(0deg)";
   wheel.innerHTML = displayOptions.length
     ? displayOptions
@@ -1610,8 +1650,6 @@ function renderLearningWheel() {
         })
         .join("")
     : '<span class="wheel-empty">No matching activities</span>';
-  void wheel.offsetWidth;
-  wheel.style.transition = "";
 }
 function chooseWheelOption(options, stage) {
   data.wheelHistory ||= {};
@@ -1752,8 +1790,19 @@ function spinLearning() {
     wheel = $("#learningWheel"),
     stage = learningPath.length;
   wheel.style.setProperty("--counter-rotation", "0deg");
-  wheel.style.transform = `rotate(${target}deg)`;
-  setTimeout(() => {
+  learningAnimation?.cancel();
+  learningAnimation = wheel.animate(
+    [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${target}deg)` },
+    ],
+    {
+      duration: 7800,
+      easing: "cubic-bezier(0.06, 0.58, 0.04, 1)",
+      fill: "forwards",
+    },
+  );
+  learningAnimation.onfinish = () => {
     learningSpinning = false;
     learningPendingChoice = chosen;
     const result = $("#learningResult");
@@ -1764,14 +1813,9 @@ function spinLearning() {
       if (activity) showActivityDetail(activity);
       $("#learningRespin").hidden = false;
     }
-    $("#learningSpin").textContent =
-      stage === 0
-        ? "Continue to subject"
-        : stage === 1
-          ? "Continue to activity"
-          : "Use this activity";
+    $("#learningSpin").textContent = stage < 2 ? "Next" : "Choose this";
     $("#learningSpin").disabled = false;
-  }, 7800);
+  };
 }
 function selectLearningActivity() {
   const [area, subject, name] = learningPath,
@@ -1859,10 +1903,11 @@ function renderOutings() {
         : "min(27vw, 180px)",
   );
   wheel.style.setProperty("--counter-rotation", "0deg");
-  wheel.style.transition = "none";
+  outingAnimation?.cancel();
+  outingAnimation = null;
   wheel.style.transform = "rotate(0deg)";
   wheel.style.background = displayOptions.length
-    ? `conic-gradient(${displayOptions.map((label, i) => `${colours.get(label)} ${i * size}deg ${(i + 1) * size}deg`).join(",")})`
+    ? wheelBackground(displayOptions, colours, size)
     : "#d9ddd7";
   wheel.innerHTML = displayOptions.length
     ? displayOptions
@@ -1872,8 +1917,6 @@ function renderOutings() {
         )
         .join("")
     : '<span class="wheel-empty">No matching outings</span>';
-  void wheel.offsetWidth;
-  wheel.style.transition = "";
   $("#spinButton").disabled = !options.length || outingSpinning;
   $("#spinButton").textContent = "Spin the wheel";
   $("#outingResult").hidden = true;
@@ -1900,15 +1943,26 @@ function spin() {
   $("#spinButton").textContent = "Spinning…";
   $("#outingResult").hidden = true;
   wheel.style.setProperty("--counter-rotation", "0deg");
-  wheel.style.transform = `rotate(${target}deg)`;
-  setTimeout(() => {
+  outingAnimation?.cancel();
+  outingAnimation = wheel.animate(
+    [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${target}deg)` },
+    ],
+    {
+      duration: 7800,
+      easing: "cubic-bezier(0.06, 0.58, 0.04, 1)",
+      fill: "forwards",
+    },
+  );
+  outingAnimation.onfinish = () => {
     outingSpinning = false;
     const result = $("#outingResult");
     result.innerHTML = `<strong>${esc(choice.name)}</strong><br><span>${esc(choice.time)} · ${esc(choice.weather)} weather · ${esc(choice.cost)}</span>`;
     result.hidden = false;
     $("#spinButton").disabled = false;
     $("#spinButton").textContent = "Spin again";
-  }, 7800);
+  };
 }
 function renderProgress() {
   const totals = Object.fromEntries(

@@ -314,7 +314,7 @@ textarea {
 }
 .learning-steps div.done span::before {
   content: "✓";
-  font-size: 0.9rem;
+  font-size: 1.1rem;
 }
 .learning-wheel-wrap {
   position: relative;
@@ -378,8 +378,12 @@ textarea {
     rotate(var(--counter-rotation));
 }
 .learning-wheel.dense .wheel-option {
-  width: 125px;
-  font-size: 0.78rem;
+  width: 145px;
+  font-size: 1.04rem;
+}
+.learning-wheel.very-dense .wheel-option {
+  width: 112px;
+  font-size: 0.8rem;
 }
 .wheel-empty {
   position: absolute;
@@ -463,8 +467,12 @@ textarea {
 .learning-actions {
   display: flex;
   justify-content: flex-start;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
+}
+.learning-actions button {
+  padding: 10px 12px;
+  white-space: nowrap;
 }
 .points {
   margin-left: auto;
